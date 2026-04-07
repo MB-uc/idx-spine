@@ -836,8 +836,7 @@ const ctx = canvas.getContext('2d');
 let activeFilter = 'all';
 let bubbles = [];
 
-function computeBubbles() {
-  const W = canvas.width, H = canvas.height;
+function computeBubbles(W, H) {
   const PAD = { left: 60, right: 40, top: 30, bottom: 50 };
   const plotW = W - PAD.left - PAD.right;
   const plotH = H - PAD.top - PAD.bottom;
@@ -855,12 +854,13 @@ function computeBubbles() {
 
 function drawScatter() {
   const dpr = window.devicePixelRatio || 1;
-  canvas.width = canvas.offsetWidth * dpr;
-  canvas.height = 520 * dpr;
-  canvas.style.height = '520px';
+  const W = canvas.parentElement?.clientWidth || canvas.offsetWidth || 900;
+  const H = 520;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.height = H + 'px';
   ctx.scale(dpr, dpr);
-  const W = canvas.offsetWidth, H = 520;
-  const { PAD, plotH, maxPen } = computeBubbles();
+  const { PAD, plotH, maxPen } = computeBubbles(W, H);
 
   ctx.clearRect(0, 0, W, H);
 
@@ -982,7 +982,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
-  setTimeout(drawScatter, 100);
+  requestAnimationFrame(() => requestAnimationFrame(drawScatter));
 });
 </script>
 </body>
