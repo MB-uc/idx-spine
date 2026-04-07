@@ -854,12 +854,13 @@ function computeBubbles(W, H) {
 
 function drawScatter() {
   const dpr = window.devicePixelRatio || 1;
-  const W = canvas.parentElement?.clientWidth || canvas.offsetWidth || 900;
+  const W = canvas.parentElement?.clientWidth || 900;
   const H = 520;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
   canvas.width = W * dpr;
   canvas.height = H * dpr;
-  canvas.style.height = H + 'px';
-  ctx.scale(dpr, dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   const { PAD, plotH, maxPen } = computeBubbles(W, H);
 
   ctx.clearRect(0, 0, W, H);
