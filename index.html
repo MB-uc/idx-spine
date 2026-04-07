@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Semantic Spine — IDX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c0f;
+  --surface: #111318;
+  --surface2: #171b22;
+  --border: rgba(255,255,255,0.07);
+  --border-hover: rgba(255,255,255,0.15);
+  --text: #e8e6e0;
+  --text-secondary: #7a7872;
+  --text-tertiary: #454340;
+  --esg: #2d7a4f;
+  --esg-light: #4ab87a;
+  --ir: #1e5fa8;
+  --ir-light: #4a9de8;
+  --cc: #7a3a2d;
+  --cc-light: #d4704a;
+  --ct: #5a3a7a;
+  --ct-light: #9a6fd4;
+  --bp: #6b5a1e;
+  --bp-light: #c4a83a;
+  --critical: #d44a3a;
+  --high: #d4843a;
+  --standard: #4a7a4a;
+  --accent: #c4a83a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* TYPOGRAPHY */
+.serif { font-family: 'DM Serif Display', serif; }
+.mono { font-family: 'DM Mono', monospace; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1rem 3rem;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: rgba(10,12,15,0.92);
+  backdrop-filter: blur(12px);
+}
+.nav-logo { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary); letter-spacing: 0.15em; text-transform: uppercase; }
+.nav-links { display: flex; gap: 2rem; }
+.nav-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; letter-spacing: 0.04em; transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+
+/* SECTIONS */
+section { padding: 8rem 3rem; max-width: 1400px; margin: 0 auto; }
+section.full-bleed { max-width: none; padding: 8rem 3rem; }
+.section-inner { max-width: 1400px; margin: 0 auto; }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 8rem 3rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(196,168,58,0.04) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 40% at 20% 80%, rgba(45,122,79,0.06) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 30%, transparent 80%);
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 2rem; }
+.hero-title { font-family: 'DM Serif Display', serif; font-size: clamp(3rem, 7vw, 6.5rem); line-height: 1.0; color: var(--text); max-width: 14ch; margin-bottom: 2rem; }
+.hero-title em { font-style: italic; color: var(--accent); }
+.hero-sub { font-size: 1.1rem; color: var(--text-secondary); max-width: 55ch; line-height: 1.7; margin-bottom: 3rem; }
+.hero-stats { display: flex; gap: 3rem; }
+.hero-stat-n { font-family: 'DM Serif Display', serif; font-size: 2.8rem; color: var(--text); display: block; }
+.hero-stat-l { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-secondary); letter-spacing: 0.1em; text-transform: uppercase; }
+.scroll-hint {
+  position: absolute; bottom: 2rem; right: 3rem; z-index: 1;
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-tertiary);
+  letter-spacing: 0.1em;
+}
+.scroll-hint-line { width: 40px; height: 1px; background: var(--text-tertiary); }
+
+/* PROBLEM SECTION */
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+.problem-text h2 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.1; margin-bottom: 1.5rem; }
+.problem-text p { color: var(--text-secondary); line-height: 1.8; margin-bottom: 1rem; }
+.problem-chart-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; }
+.bar-chart { display: flex; flex-direction: column; gap: 0.75rem; }
+.bar-row { display: grid; grid-template-columns: 10rem 1fr 4rem; align-items: center; gap: 1rem; }
+.bar-label { font-size: 13px; color: var(--text-secondary); text-align: right; }
+.bar-track { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transform-origin: left; transform: scaleX(0); transition: transform 1.2s cubic-bezier(0.16,1,0.3,1); }
+.bar-row.visible .bar-fill { transform: scaleX(1); }
+.bar-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary); }
+
+/* MECHANISM SECTION */
+.mechanism-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem; }
+.mechanism-title { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); max-width: 20ch; margin-bottom: 3rem; }
+.chain { display: grid; grid-template-columns: repeat(4, 1fr) ; gap: 0; margin-bottom: 4rem; position: relative; }
+.chain::before {
+  content: ''; position: absolute; top: 2.5rem; left: 12%; right: 12%;
+  height: 1px; background: linear-gradient(90deg, transparent, var(--accent), var(--accent), transparent);
+  opacity: 0.3;
+}
+.chain-step { padding: 0 1rem; position: relative; }
+.chain-n { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-tertiary); margin-bottom: 0.5rem; }
+.chain-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+}
+.chain-title { font-size: 14px; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
+.chain-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+.code-example {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.code-header {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.code-header-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.1em; }
+.code-header-tag {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  padding: 2px 8px; border-radius: 3px;
+  background: rgba(196,168,58,0.12); color: var(--accent);
+}
+.code-body { padding: 1.5rem; overflow-x: auto; }
+.code-body pre { font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.9; color: var(--text-secondary); }
+.code-body .k { color: var(--ir-light); }
+.code-body .s { color: #8fbf6a; }
+.code-body .c { color: var(--text-tertiary); font-style: italic; }
+.code-body .h { color: var(--accent); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+/* SCATTER SECTION */
+.scatter-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.scatter-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem; }
+.scatter-title { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3vw, 2.4rem); max-width: 24ch; }
+.domain-legend { display: flex; flex-wrap: wrap; gap: 1rem; }
+.legend-item { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 4px 10px; border: 1px solid transparent; border-radius: 4px; transition: all 0.2s; }
+.legend-item:hover { border-color: var(--border-hover); }
+.legend-item.active { background: rgba(255,255,255,0.04); border-color: var(--border-hover); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-secondary); letter-spacing: 0.05em; }
+.scatter-container { position: relative; }
+#scatter-canvas { width: 100%; display: block; cursor: crosshair; }
+.scatter-axes { position: absolute; inset: 0; pointer-events: none; }
+.axis-label-x { position: absolute; bottom: -2rem; left: 50%; transform: translateX(-50%); font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; }
+.axis-label-y { position: absolute; left: -3.5rem; top: 50%; transform: rotate(-90deg) translateX(-50%); font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+.axis-note { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-tertiary); margin-top: 2.5rem; padding-left: 4rem; }
+
+/* NODE PANEL */
+.node-panel {
+  position: fixed; right: 0; top: 0; bottom: 0; width: 400px;
+  background: var(--surface); border-left: 1px solid var(--border);
+  z-index: 200; transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  overflow-y: auto; display: flex; flex-direction: column;
+}
+.node-panel.open { transform: translateX(0); }
+.node-panel-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; }
+.node-panel-id { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.node-panel-name { font-family: 'DM Serif Display', serif; font-size: 1.3rem; line-height: 1.2; flex: 1; }
+.panel-close { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 32px; height: 32px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-left: 1rem; transition: all 0.2s; font-size: 14px; }
+.panel-close:hover { border-color: var(--border-hover); color: var(--text); }
+.node-panel-body { padding: 1.5rem; flex: 1; }
+.panel-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.5rem; }
+.panel-meta-item { background: var(--surface2); padding: 0.75rem; border-radius: 4px; }
+.panel-meta-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem; }
+.panel-meta-val { font-size: 13px; font-weight: 500; }
+.panel-section-title { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; margin-top: 1.25rem; }
+.panel-def { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+.panel-schema { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem; margin-top: 0.5rem; }
+.panel-schema-type { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ir-light); }
+.panel-schema-props { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-secondary); margin-top: 0.25rem; line-height: 1.6; }
+.panel-pen { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem; }
+.panel-pen-bar { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.panel-pen-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+.panel-pen-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary); }
+.panel-priority-badge {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.05em;
+  padding: 3px 8px; border-radius: 3px;
+}
+.priority-critical { background: rgba(212,74,58,0.15); color: #e87060; }
+.priority-high { background: rgba(212,132,58,0.15); color: #e8a060; }
+.priority-standard { background: rgba(74,122,74,0.15); color: #80b880; }
+
+/* NODE EXPLORER GRID */
+.explorer-section { padding-top: 4rem; }
+.explorer-filters { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+.filter-btn { background: none; border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-family: 'Instrument Sans', sans-serif; transition: all 0.2s; }
+.filter-btn:hover { border-color: var(--border-hover); color: var(--text); }
+.filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(196,168,58,0.06); }
+.node-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--border); }
+.node-card {
+  background: var(--bg); padding: 1rem 1.25rem;
+  cursor: pointer; transition: background 0.15s;
+  border: none; text-align: left; width: 100%;
+  display: flex; flex-direction: column; gap: 0.4rem;
+}
+.node-card:hover { background: var(--surface); }
+.node-card-id { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.08em; }
+.node-card-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
+.node-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 0.25rem; }
+.node-card-domain { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.node-card-pen { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-tertiary); }
+.node-card.hidden { display: none; }
+
+/* OPPORTUNITY SECTION */
+.opportunity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+.opp-card { border: 1px solid var(--border); border-radius: 6px; padding: 1.75rem; position: relative; overflow: hidden; }
+.opp-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.opp-card.esg::before { background: linear-gradient(90deg, transparent, var(--esg-light), transparent); }
+.opp-card.ir::before { background: linear-gradient(90deg, transparent, var(--ir-light), transparent); }
+.opp-card.ct::before { background: linear-gradient(90deg, transparent, var(--ct-light), transparent); }
+.opp-card.cc::before { background: linear-gradient(90deg, transparent, var(--cc-light), transparent); }
+.opp-card.bp::before { background: linear-gradient(90deg, transparent, var(--bp-light), transparent); }
+.opp-n { font-family: 'DM Serif Display', serif; font-size: 2.2rem; margin-bottom: 0.25rem; }
+.opp-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+.opp-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* FOOTER */
+footer { padding: 3rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.footer-logo { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-tertiary); letter-spacing: 0.15em; text-transform: uppercase; }
+.footer-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-tertiary); }
+
+/* TOOLTIP */
+#tooltip {
+  position: fixed; z-index: 300; pointer-events: none;
+  background: var(--surface); border: 1px solid var(--border-hover);
+  border-radius: 5px; padding: 0.6rem 0.9rem;
+  font-size: 12px; max-width: 200px;
+  opacity: 0; transition: opacity 0.15s;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+#tooltip.visible { opacity: 1; }
+.tt-id { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-tertiary); }
+.tt-name { font-weight: 500; color: var(--text); margin: 2px 0; line-height: 1.3; }
+.tt-pen { font-family: 'DM Mono', monospace; font-size: 11px; }
+
+/* DIVIDER */
+.divider { width: 40px; height: 2px; background: var(--accent); margin: 1.5rem 0; opacity: 0.5; }
+
+/* REVEAL ANIMATIONS */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+  .problem-grid, .two-col, .opportunity-grid { grid-template-columns: 1fr; }
+  .chain { grid-template-columns: 1fr 1fr; }
+  .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+  nav { padding: 1rem 1.5rem; }
+  section { padding: 5rem 1.5rem; }
+  .hero { padding: 6rem 1.5rem 4rem; }
+  .node-panel { width: 100%; }
+  .scatter-header { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">IDX · Semantic Spine</span>
+  <div class="nav-links">
+    <a href="#problem">The problem</a>
+    <a href="#mechanism">The mechanism</a>
+    <a href="#vocabulary">The vocabulary</a>
+    <a href="#opportunity">The opportunity</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-label">IDX · Internal working document · April 2026</div>
+    <h1 class="hero-title serif">The Semantic <em>Spine</em></h1>
+    <p class="hero-sub">A governed controlled vocabulary for the corporate digital estate — 107 precisely defined concepts that connect content, schema.org markup, and AI representation into a single compounding system.</p>
+    <div class="hero-stats">
+      <div>
+        <span class="hero-stat-n serif">107</span>
+        <span class="hero-stat-l mono">Canonical nodes</span>
+      </div>
+      <div>
+        <span class="hero-stat-n serif">5</span>
+        <span class="hero-stat-l mono">Domains</span>
+      </div>
+      <div>
+        <span class="hero-stat-n serif">240×</span>
+        <span class="hero-stat-l mono">AI traffic growth</span>
+      </div>
+      <div>
+        <span class="hero-stat-n serif">0.65%</span>
+        <span class="hero-stat-l mono">Current AI penetration</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll to explore</span>
+    <span class="scroll-hint-line"></span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="problem-grid">
+    <div class="problem-text reveal">
+      <div class="mono" style="font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1rem;">01 — The problem</div>
+      <h2 class="serif">The content exists. The AI cannot read it.</h2>
+      <div class="divider"></div>
+      <p>AI platforms — ChatGPT, Gemini, Perplexity, Copilot — have become a primary channel through which investors, analysts, job seekers, and procurement managers seek corporate information. AI referral traffic across the IDX portfolio has grown 240-fold since January 2024.</p>
+      <p>But the most-visited sections of major corporate websites are frequently the least represented in AI-generated answers. Careers, supplier onboarding, IR tools, deep product pages — high human traffic, near-zero AI penetration. The content exists. The problem is structure.</p>
+      <p>The semantic spine is the solution to that structural problem.</p>
+    </div>
+    <div class="reveal" style="transition-delay:0.15s">
+      <div class="problem-chart-label mono">AI penetration by content category — primary IDX portfolio</div>
+      <div class="bar-chart" id="bar-chart">
+        <div class="bar-row" style="--delay:0.1s">
+          <div class="bar-label">Sustainability</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--esg-light);transition-delay:0.1s"></div></div>
+          <div class="bar-val">1.37%</div>
+        </div>
+        <div class="bar-row" style="--delay:0.2s">
+          <div class="bar-label">Suppliers</div>
+          <div class="bar-track"><div class="bar-fill" style="width:95%;background:var(--cc-light);transition-delay:0.2s"></div></div>
+          <div class="bar-val">1.12%</div>
+        </div>
+        <div class="bar-row" style="--delay:0.3s">
+          <div class="bar-label">Innovation</div>
+          <div class="bar-track"><div class="bar-fill" style="width:74%;background:var(--bp-light);transition-delay:0.3s"></div></div>
+          <div class="bar-val">0.85%</div>
+        </div>
+        <div class="bar-row" style="--delay:0.4s">
+          <div class="bar-label">Media / news</div>
+          <div class="bar-track"><div class="bar-fill" style="width:62%;background:var(--cc-light);transition-delay:0.4s"></div></div>
+          <div class="bar-val">0.72%</div>
+        </div>
+        <div class="bar-row" style="--delay:0.5s">
+          <div class="bar-label">Investors</div>
+          <div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--ir-light);transition-delay:0.5s"></div></div>
+          <div class="bar-val">0.21%</div>
+        </div>
+        <div class="bar-row" style="--delay:0.6s">
+          <div class="bar-label">Careers</div>
+          <div class="bar-track"><div class="bar-fill" style="width:9%;background:var(--ct-light);transition-delay:0.6s"></div></div>
+          <div class="bar-val">0.10%</div>
+        </div>
+        <div class="bar-row" style="--delay:0.7s">
+          <div class="bar-label">Job listings</div>
+          <div class="bar-track"><div class="bar-fill" style="width:5%;background:#d44a3a;transition-delay:0.7s"></div></div>
+          <div class="bar-val">0.06%</div>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-tertiary);line-height:1.6;">
+        Source: ci-c360.ga4.processed · Jan 2024 – Apr 2026 · 250 production domains<br>
+        Job listings figure confirmed by direct page inspection: JS-rendered shell, no structured data.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MECHANISM -->
+<section id="mechanism" style="border-top:1px solid var(--border);">
+  <div class="reveal">
+    <div class="mechanism-label">02 — The mechanism</div>
+    <h2 class="serif mechanism-title">How a spine node becomes machine-readable content</h2>
+    <div class="chain">
+      <div class="chain-step">
+        <div class="chain-n mono">01</div>
+        <div class="chain-icon" style="background:rgba(196,168,58,0.08);border-color:rgba(196,168,58,0.2);color:var(--accent);">NODE</div>
+        <div class="chain-title">Spine node definition</div>
+        <div class="chain-desc">A precisely governed concept. T1.1 — Job listings and search: the primary interface through which candidates discover open roles. One definition, one meaning, across every client.</div>
+      </div>
+      <div class="chain-step">
+        <div class="chain-n mono">02</div>
+        <div class="chain-icon" style="background:rgba(74,157,232,0.08);border-color:rgba(74,157,232,0.2);color:var(--ir-light);">TYPE</div>
+        <div class="chain-title">schema.org mapping</div>
+        <div class="chain-desc">Each node carries a schema.org type. T1.1 maps to schema.org/JobPosting. The type is the machine-readable vocabulary that search engines and AI platforms understand.</div>
+      </div>
+      <div class="chain-step">
+        <div class="chain-n mono">03</div>
+        <div class="chain-icon" style="background:rgba(143,191,106,0.08);border-color:rgba(143,191,106,0.2);color:#8fbf6a;">{JSON}</div>
+        <div class="chain-title">JSON-LD in page HTML</div>
+        <div class="chain-desc">The Schema Controller writes a JSON-LD script block to the page's &lt;head&gt;. The block contains the structured properties the AI platform needs to classify and cite the content.</div>
+      </div>
+      <div class="chain-step">
+        <div class="chain-n mono">04</div>
+        <div class="chain-icon" style="background:rgba(154,111,212,0.08);border-color:rgba(154,111,212,0.2);color:var(--ct-light);">AI ↗</div>
+        <div class="chain-title">AI can read and cite it</div>
+        <div class="chain-desc">The AI platform parses the structured data, classifies the page, and can answer: "What engineering roles does Anglo American have in Chile?" — with current, authoritative, citable content.</div>
+      </div>
+    </div>
+  </div>
+  <div class="two-col reveal" style="transition-delay:0.2s">
+    <div class="code-example">
+      <div class="code-header">
+        <span class="code-header-title mono">Without the spine — what a crawler sees</span>
+        <span class="code-header-tag">Anglo American · Job detail page · Verified April 2026</span>
+      </div>
+      <div class="code-body">
+        <pre><span class="c">&lt;!-- Page title: Executive Head of Technical &amp; Strategy --&gt;</span>
+<span class="c">&lt;!-- Raw HTML response from live page fetch: --&gt;</span>
+
+<span class="k">&lt;head&gt;</span>
+  <span class="k">&lt;title&gt;</span><span class="s">Executive Head of Technical &amp; Strategy | Anglo American</span><span class="k">&lt;/title&gt;</span>
+  <span class="k">&lt;script</span> <span class="h">src=</span><span class="s">"app.bundle.js"</span><span class="k">&gt;&lt;/script&gt;</span>
+<span class="k">&lt;/head&gt;</span>
+<span class="k">&lt;body&gt;</span>
+  <span class="c">&lt;!-- Navigation chrome --&gt;</span>
+  <span class="c">&lt;!-- Tracking pixels --&gt;</span>
+  <span class="c">&lt;!-- &lt;div id="job-content"&gt; --&gt;</span>
+  <span class="c">&lt;!--   EMPTY — loaded by JavaScript --&gt;</span>
+  <span class="c">&lt;!--   API call: /api/jobs/{guid} --&gt;</span>
+  <span class="c">&lt;!-- &lt;/div&gt; --&gt;</span>
+<span class="k">&lt;/body&gt;</span>
+
+<span class="c">&lt;!-- No job content. No JSON-LD. No schema.org markup. --&gt;</span>
+<span class="c">&lt;!-- 21.8M annual sessions to a shell. --&gt;</span></pre>
+      </div>
+    </div>
+    <div class="code-example">
+      <div class="code-header">
+        <span class="code-header-title mono">With the spine — T1.1 JobPosting schema</span>
+        <span class="code-header-tag">Node T1.1 · Critical · schema.org/JobPosting</span>
+      </div>
+      <div class="code-body">
+        <pre><span class="k">&lt;script</span> <span class="h">type=</span><span class="s">"application/ld+json"</span><span class="k">&gt;</span>
+{
+  <span class="h">"@context"</span>: <span class="s">"https://schema.org"</span>,
+  <span class="h">"@type"</span>: <span class="s">"JobPosting"</span>,
+  <span class="h">"title"</span>: <span class="s">"Executive Head of Technical and Strategy"</span>,
+  <span class="h">"hiringOrganization"</span>: {
+    <span class="h">"@type"</span>: <span class="s">"Organization"</span>,
+    <span class="h">"name"</span>: <span class="s">"Anglo American"</span>,
+    <span class="h">"sameAs"</span>: <span class="s">"https://www.wikidata.org/wiki/Q47876"</span>
+  },
+  <span class="h">"jobLocation"</span>: {
+    <span class="h">"@type"</span>: <span class="s">"Place"</span>,
+    <span class="h">"address"</span>: {
+      <span class="h">"addressCountry"</span>: <span class="s">"ZA"</span>,
+      <span class="h">"addressLocality"</span>: <span class="s">"Johannesburg"</span>
+    }
+  },
+  <span class="h">"employmentType"</span>: <span class="s">"FULL_TIME"</span>,
+  <span class="h">"datePosted"</span>: <span class="s">"2026-04-01"</span>,
+  <span class="h">"validThrough"</span>: <span class="s">"2026-05-01"</span>
+}
+<span class="k">&lt;/script&gt;</span>
+
+<span class="c">// AI can now answer: "What engineering roles does</span>
+<span class="c">// Anglo American have?" — with current, citable data.</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCATTER -->
+<div id="vocabulary" class="scatter-section full-bleed" style="padding:6rem 3rem 5rem;">
+  <div class="section-inner">
+    <div class="scatter-header reveal">
+      <div>
+        <div class="mono" style="font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.75rem;">03 — The vocabulary</div>
+        <h2 class="serif scatter-title">107 nodes across five domains — click any node to explore</h2>
+        <p style="color:var(--text-secondary);font-size:14px;margin-top:0.75rem;max-width:55ch;">Each bubble is a canonical spine node. Position: x-axis = relative traffic volume (log scale), y-axis = observed AI penetration. Size = AEO priority. Click to open the node definition, schema.org mapping, and JSON-LD example.</p>
+      </div>
+      <div class="domain-legend">
+        <div class="legend-item active" data-domain="all"><div class="legend-dot" style="background:var(--text-secondary)"></div><span class="legend-label">All</span></div>
+        <div class="legend-item" data-domain="ESG"><div class="legend-dot" style="background:var(--esg-light)"></div><span class="legend-label">ESG</span></div>
+        <div class="legend-item" data-domain="IR"><div class="legend-dot" style="background:var(--ir-light)"></div><span class="legend-label">IR</span></div>
+        <div class="legend-item" data-domain="CC"><div class="legend-dot" style="background:var(--cc-light)"></div><span class="legend-label">CC</span></div>
+        <div class="legend-item" data-domain="CT"><div class="legend-dot" style="background:var(--ct-light)"></div><span class="legend-label">CT</span></div>
+        <div class="legend-item" data-domain="BP"><div class="legend-dot" style="background:var(--bp-light)"></div><span class="legend-label">BP</span></div>
+      </div>
+    </div>
+    <div class="scatter-container" style="margin-left:4rem;">
+      <canvas id="scatter-canvas" height="500"></canvas>
+      <div class="axis-label-x">Traffic volume (log scale) →</div>
+      <div class="axis-label-y">AI penetration %</div>
+    </div>
+    <div class="axis-note">Each bubble represents one canonical spine node. Size = AEO priority (Critical > High > Standard). Nodes with no direct section mapping in portfolio data are plotted at estimated positions based on content category benchmarks.</div>
+  </div>
+</div>
+
+<!-- NODE GRID -->
+<section style="padding-top:4rem;padding-bottom:2rem;">
+  <div class="reveal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+      <div class="mono" style="font-size:11px;color:var(--text-secondary);letter-spacing:0.08em;">ALL 107 NODES — click any to open definition panel</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;" id="grid-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Critical">Critical</button>
+        <button class="filter-btn" data-filter="High">High</button>
+        <button class="filter-btn" data-filter="Standard">Standard</button>
+        <button class="filter-btn" data-filter="ESG">ESG</button>
+        <button class="filter-btn" data-filter="IR">IR</button>
+        <button class="filter-btn" data-filter="CC">CC</button>
+        <button class="filter-btn" data-filter="CT">CT</button>
+        <button class="filter-btn" data-filter="BP">BP</button>
+      </div>
+    </div>
+    <div class="node-grid" id="node-grid"></div>
+  </div>
+</section>
+
+<!-- OPPORTUNITY -->
+<section id="opportunity" style="border-top:1px solid var(--border);">
+  <div class="reveal">
+    <div class="mono" style="font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1rem;">04 — The opportunity</div>
+    <h2 class="serif" style="font-size:clamp(1.8rem,3.5vw,2.8rem);max-width:22ch;margin-bottom:1rem;">What changes when the spine is in place</h2>
+    <p style="color:var(--text-secondary);max-width:58ch;line-height:1.8;">Each node carries a schema.org mapping, an AEO priority rating, and a freshness threshold. When the infrastructure is in place, AI representation assessment becomes a repeatable managed service — not a series of one-off audits.</p>
+    <div class="opportunity-grid">
+      <div class="opp-card esg">
+        <div class="opp-n serif">27</div>
+        <div class="opp-label mono">ESG nodes</div>
+        <div class="opp-desc">From climate targets to supply chain transparency. The domain with the highest organic AI penetration — up to 1.37% without schema intervention. With it: structured, citable data points for every ESG framework disclosure.</div>
+      </div>
+      <div class="opp-card ir">
+        <div class="opp-n serif">25</div>
+        <div class="opp-label mono">IR nodes</div>
+        <div class="opp-desc">Results, governance, capital allocation, dividends. Currently suppressed by JS-rendered tools and PDF-first publishing. HTML-first publishing + schema.org/FinancialProduct and Report types unlock the gap.</div>
+      </div>
+      <div class="opp-card cc">
+        <div class="opp-n serif">20</div>
+        <div class="opp-label mono">CC nodes</div>
+        <div class="opp-desc">Press releases, leadership, corporate narrative, supplier onboarding. CC6.1 — Supplier engagement — is a portfolio-derived node: no external standard covers it. IDX is the originating authority.</div>
+      </div>
+      <div class="opp-card ct">
+        <div class="opp-n serif">18</div>
+        <div class="opp-label mono">CT nodes</div>
+        <div class="opp-desc">The highest-traffic, lowest-AI-penetration domain. Job listings are verified JavaScript-rendered shells with no structured data. schema.org/JobPosting on T1.1 unlocks 21.8M annual sessions currently invisible to AI.</div>
+      </div>
+      <div class="opp-card bp">
+        <div class="opp-n serif">17</div>
+        <div class="opp-label mono">BP nodes</div>
+        <div class="opp-desc">Brand portfolio, product catalogue, innovation pipeline, operations. B2.2 — Product innovation — achieves 0.85% AI penetration organically at Rolls-Royce. Named programme schema would push that further.</div>
+      </div>
+      <div class="opp-card" style="border-color:rgba(196,168,58,0.2);">
+        <div class="opp-n serif" style="color:var(--accent);">5</div>
+        <div class="opp-label mono">Portfolio-derived nodes</div>
+        <div class="opp-desc">E2.1, E2.4, E3.5, E3.6, E4.4 — originated by IDX from portfolio traffic evidence. No external standard covers these concepts at this specificity. These are IDX's original contribution to the vocabulary of corporate digital communication.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-logo">IDX · Semantic Spine · v1.1</span>
+  <span class="footer-meta mono">Schema Owner: Simon Heath · April 2026 · 107 canonical nodes</span>
+</footer>
+
+<!-- NODE PANEL -->
+<div id="node-panel" class="node-panel">
+  <div class="node-panel-header">
+    <div>
+      <div class="node-panel-id mono" id="panel-id"></div>
+      <div class="node-panel-name serif" id="panel-name"></div>
+    </div>
+    <button class="panel-close" id="panel-close">✕</button>
+  </div>
+  <div class="node-panel-body">
+    <div class="panel-meta" id="panel-meta"></div>
+    <div class="panel-section-title mono">Definition</div>
+    <div class="panel-def" id="panel-def"></div>
+    <div class="panel-section-title mono">schema.org mapping</div>
+    <div class="panel-schema">
+      <div class="panel-schema-type" id="panel-type"></div>
+      <div class="panel-schema-props" id="panel-props"></div>
+    </div>
+    <div class="panel-section-title mono">Observed AI penetration</div>
+    <div class="panel-pen">
+      <div class="panel-pen-bar"><div class="panel-pen-fill" id="panel-pen-fill"></div></div>
+      <div class="panel-pen-val" id="panel-pen-val"></div>
+    </div>
+    <div class="panel-section-title mono">JSON-LD example</div>
+    <div class="code-example" style="margin-top:0.5rem;">
+      <div class="code-body" style="padding:1rem;">
+        <pre id="panel-jsonld" style="font-size:11px;line-height:1.7;white-space:pre-wrap;word-break:break-all;"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-id" id="tt-id"></div>
+  <div class="tt-name" id="tt-name"></div>
+  <div class="tt-pen" id="tt-pen"></div>
+</div>
+
+<script>
+// ── NODE DATA ────────────────────────────────────────────────────────────────
+const DOMAIN_COLORS = {
+  ESG: { fill: '#2d7a4f', light: '#4ab87a' },
+  IR:  { fill: '#1e5fa8', light: '#4a9de8' },
+  CC:  { fill: '#7a3a2d', light: '#d4704a' },
+  CT:  { fill: '#5a3a7a', light: '#9a6fd4' },
+  BP:  { fill: '#6b5a1e', light: '#c4a83a' },
+};
+
+const NODES = [
+  // ESG
+  { id:'E1.1', name:'Climate strategy and targets', domain:'ESG', priority:'Critical', source:'External', pen:1.37, vol:8.2, schema:'Dataset', props:'variableMeasured, measurementTechnique, datePublished, creator', def:'Published climate strategy including net-zero commitments, interim targets, and the governance framework overseeing climate transition.', jsonld:'{\n  "@type": "Dataset",\n  "name": "Climate Strategy and Targets 2024",\n  "creator": { "@type": "Organization", "name": "Anglo American", "sameAs": "https://www.wikidata.org/wiki/Q47876" },\n  "variableMeasured": "Net-zero target year",\n  "datePublished": "2024-03-01"\n}' },
+  { id:'E1.2', name:'Greenhouse gas emissions', domain:'ESG', priority:'Critical', source:'External', pen:1.20, vol:7.8, schema:'Dataset', props:'variableMeasured, measurementTechnique, unitText, value, datePublished', def:'Quantitative disclosure of Scope 1, 2 and 3 greenhouse gas emissions, measurement methodology, and year-on-year performance.', jsonld:'{\n  "@type": "Dataset",\n  "name": "GHG Emissions Report 2024",\n  "variableMeasured": "Scope 1 CO2e emissions",\n  "unitText": "metric tonnes CO2e",\n  "datePublished": "2024-03-01"\n}' },
+  { id:'E1.3', name:'Climate transition and resilience', domain:'ESG', priority:'High', source:'External', pen:1.10, vol:6.5, schema:'Report', props:'name, datePublished, about, url', def:'Disclosure of physical and transition climate risks, TCFD-aligned scenario analysis, and resilience measures under different temperature pathways.', jsonld:'{\n  "@type": "Report",\n  "name": "TCFD Climate Resilience Report 2024",\n  "about": { "@type": "Thing", "name": "Climate scenario analysis" }\n}' },
+  { id:'E1.4', name:'Energy use and efficiency', domain:'ESG', priority:'Standard', source:'External', pen:0.90, vol:5.2, schema:'Dataset', props:'variableMeasured, value, unitText', def:'Total energy consumption, energy intensity, renewable energy share, and energy efficiency improvement programmes.', jsonld:'{\n  "@type": "Dataset",\n  "name": "Energy Use Data 2024",\n  "variableMeasured": "Total energy consumption GJ"\n}' },
+  { id:'E1.5', name:'Renewable energy', domain:'ESG', priority:'High', source:'External', pen:0.95, vol:5.8, schema:'Dataset', props:'variableMeasured, value, unitText', def:'Renewable energy sourcing, generation, and procurement including PPA agreements and on-site generation capacity.', jsonld:'{\n  "@type": "Dataset",\n  "name": "Renewable Energy Data 2024"\n}' },
+  { id:'E1.6', name:'Carbon markets and offsets', domain:'ESG', priority:'Standard', source:'External', pen:0.75, vol:3.8, schema:'Dataset', props:'variableMeasured, description', def:'Use of carbon credits, offset programmes, and participation in voluntary or compliance carbon markets.', jsonld:'{\n  "@type": "Dataset",\n  "name": "Carbon Offset Portfolio 2024"\n}' },
+  { id:'E2.1', name:'Nature and biodiversity', domain:'ESG', priority:'Critical', source:'Portfolio', pen:1.15, vol:6.2, schema:'Report', props:'name, datePublished, about, url', def:'Biodiversity impact assessment, net-positive nature commitments, habitat management programmes, and alignment with the Taskforce on Nature-related Financial Disclosures (TNFD). Portfolio-derived node — no external standard covers this at this specificity.', jsonld:'{\n  "@type": "Report",\n  "name": "Biodiversity and Nature Report 2024",\n  "about": { "@type": "Thing", "name": "Biodiversity net gain" }\n}' },
+  { id:'E2.2', name:'Water stewardship', domain:'ESG', priority:'High', source:'External', pen:0.88, vol:5.0, schema:'Dataset', props:'variableMeasured, value, unitText', def:'Water withdrawal, consumption, recycling, and stewardship in water-stressed areas. Includes water risk assessment and community water impacts.', jsonld:'{\n  "@type": "Dataset",\n  "name": "Water Use Data 2024",\n  "variableMeasured": "Total water withdrawal"\n}' },
+  { id:'E2.3', name:'Waste and circular economy', domain:'ESG', priority:'Standard', source:'External', pen:0.70, vol:4.2, schema:'Dataset', props:'variableMeasured, value', def:'Waste generation, diversion from landfill, circular economy initiatives, and hazardous waste management.', jsonld:'{\n  "@type": "Dataset",\n  "name": "Waste Data 2024"\n}' },
+  { id:'E2.4', name:'Plastics and packaging', domain:'ESG', priority:'Critical', source:'Portfolio', pen:1.05, vol:5.5, schema:'Report', props:'name, datePublished, about', def:'Plastic reduction commitments, packaging redesign, recyclability targets, and extended producer responsibility. Portfolio-derived node — particularly material for consumer goods clients.', jsonld:'{\n  "@type": "Report",\n  "name": "Plastics and Packaging Report 2024"\n}' },
+  { id:'E2.5', name:'Pollution and hazardous materials', domain:'ESG', priority:'Standard', source:'External', pen:0.65, vol:3.5, schema:'Dataset', props:'variableMeasured, value', def:'Emissions to air and water, hazardous substance management, spill incidents, and pollution prevention programmes.', jsonld:'{\n  "@type": "Dataset",\n  "name": "Pollution Data 2024"\n}' },
+  { id:'E3.1', name:'Workforce health, safety and wellbeing', domain:'ESG', priority:'High', source:'External', pen:0.92, vol:5.5, schema:'Dataset', props:'variableMeasured, value, datePublished', def:'Fatality rate, injury frequency, occupational health programmes, and employee wellbeing initiatives.', jsonld:'{\n  "@type": "Dataset",\n  "name": "Safety Performance Data 2024",\n  "variableMeasured": "Total Recordable Injury Rate"\n}' },
+  { id:'E3.2', name:'Diversity, equity and inclusion', domain:'ESG', priority:'High', source:'External', pen:0.85, vol:5.2, schema:'Dataset', props:'variableMeasured, value', def:'Gender, ethnicity, and nationality representation across grades, pay equity analysis, and inclusion programme outcomes.', jsonld:'{\n  "@type": "Dataset",\n  "name": "DEI Data 2024",\n  "variableMeasured": "Women in senior leadership %"\n}' },
+  { id:'E3.3', name:'Human rights and labour standards', domain:'ESG', priority:'High', source:'External', pen:0.80, vol:4.8, schema:'Report', props:'name, datePublished, about', def:'Modern slavery statement, forced labour risk assessment, supply chain labour standards, and remedy mechanisms.', jsonld:'{\n  "@type": "Report",\n  "name": "Modern Slavery Statement 2024"\n}' },
+  { id:'E3.4', name:'Community and social impact', domain:'ESG', priority:'Standard', source:'External', pen:0.75, vol:4.5, schema:'Report', props:'name, datePublished, about', def:'Community investment programmes, social impact measurement, stakeholder grievance mechanisms, and licence-to-operate activities.', jsonld:'{\n  "@type": "Report",\n  "name": "Social Impact Report 2024"\n}' },
+  { id:'E3.5', name:'Livelihoods', domain:'ESG', priority:'High', source:'Portfolio', pen:0.95, vol:4.8, schema:'Report', props:'name, about, datePublished', def:'Economic empowerment and livelihood development for host communities — smallholder support, skills programmes, enterprise development. Portfolio-derived node.', jsonld:'{\n  "@type": "Report",\n  "name": "Livelihoods Programme Report 2024"\n}' },
+  { id:'E3.6', name:'Consumer and stakeholder engagement', domain:'ESG', priority:'High', source:'Portfolio', pen:0.82, vol:4.6, schema:'WebPage', props:'name, about, description', def:'Stakeholder consultation processes, materiality assessment, and ongoing dialogue with consumers, communities, NGOs, and regulators. Portfolio-derived node.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Stakeholder Engagement",\n  "about": { "@type": "Thing", "name": "Materiality assessment" }\n}' },
+  { id:'E3.7', name:'Responsible products and services', domain:'ESG', priority:'Standard', source:'External', pen:0.72, vol:4.0, schema:'Product', props:'name, description, brand, sustainabilityNote', def:'Product safety, responsible sourcing claims, and the sustainability credentials of the product or service portfolio.', jsonld:'{\n  "@type": "Product",\n  "name": "Sustainable Product Portfolio",\n  "sustainabilityNote": "Responsibly sourced"\n}' },
+  { id:'E4.1', name:'ESG governance and oversight', domain:'ESG', priority:'High', source:'External', pen:0.41, vol:3.8, schema:'WebPage', props:'name, about, description', def:'Board-level ESG governance structure, committee mandates, executive accountability for sustainability, and ESG performance linkage to remuneration.', jsonld:'{\n  "@type": "WebPage",\n  "name": "ESG Governance",\n  "about": { "@type": "Thing", "name": "Board ESG oversight" }\n}' },
+  { id:'E4.2', name:'Business ethics and anti-corruption', domain:'ESG', priority:'Standard', source:'External', pen:0.55, vol:3.2, schema:'WebPage', props:'name, about', def:'Anti-bribery and corruption policy, whistleblowing mechanisms, ethics training, and investigation outcomes.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Business Ethics and Compliance"\n}' },
+  { id:'E4.3', name:'Tax transparency', domain:'ESG', priority:'Standard', source:'External', pen:0.50, vol:3.0, schema:'Report', props:'name, datePublished, about', def:'Country-by-country tax reporting, effective tax rate disclosure, and tax strategy statements.', jsonld:'{\n  "@type": "Report",\n  "name": "Tax Transparency Report 2024"\n}' },
+  { id:'E4.4', name:'Supply chain and suppliers', domain:'ESG', priority:'Critical', source:'Portfolio', pen:0.50, vol:5.2, schema:'HowTo', props:'name, description, step, url', def:'Supply chain ESG due diligence standards, supplier code of conduct, audit processes, and responsible sourcing commitments. Portfolio-derived node — distinct from CC6.1 which covers operational supplier onboarding.', jsonld:'{\n  "@type": "HowTo",\n  "name": "Supplier ESG Requirements",\n  "description": "How suppliers meet our ESG standards"\n}' },
+  { id:'E4.5', name:'Policy and regulatory engagement', domain:'ESG', priority:'Standard', source:'External', pen:0.45, vol:2.8, schema:'WebPage', props:'name, about', def:'Public policy positions, regulatory engagement activities, and trade association memberships with ESG relevance.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Policy and Regulatory Positions"\n}' },
+  { id:'E5.1', name:'ESG reporting and disclosure', domain:'ESG', priority:'High', source:'External', pen:0.70, vol:5.0, schema:'Report', props:'name, datePublished, url, encodingFormat', def:'Integrated annual report, standalone sustainability report, and other ESG disclosure documents including interactive data reports.', jsonld:'{\n  "@type": "Report",\n  "name": "Sustainability Report 2024",\n  "datePublished": "2024-03-01",\n  "encodingFormat": "application/pdf"\n}' },
+  { id:'E5.2', name:'Framework alignment', domain:'ESG', priority:'Critical', source:'External', pen:0.68, vol:4.8, schema:'Report', props:'name, datePublished, about, url', def:'Disclosure of alignment with CSRD/ESRS, GRI Standards, TCFD, ISSB/IFRS S1-S2, UN SDGs, and other recognised reporting frameworks.', jsonld:'{\n  "@type": "Report",\n  "name": "TCFD Alignment Report 2024",\n  "about": { "@type": "Thing", "name": "Task Force on Climate-related Financial Disclosures" }\n}' },
+  { id:'E5.3', name:'ESG targets and progress', domain:'ESG', priority:'Critical', source:'External', pen:1.10, vol:6.8, schema:'Dataset', props:'variableMeasured, value, targetCollection, datePublished', def:'Quantitative ESG commitments with baseline, target year, current performance, and trajectory disclosure.', jsonld:'{\n  "@type": "Dataset",\n  "name": "ESG Targets and Performance 2024",\n  "variableMeasured": "Net-zero Scope 1+2 by 2040"\n}' },
+  { id:'E5.4', name:'ESG ratings and indices', domain:'ESG', priority:'High', source:'Market', pen:0.60, vol:3.5, schema:'WebPage', props:'name, description, about', def:'Participation in ESG rating assessments (MSCI, Sustainalytics, ISS, CDP) and inclusion in sustainability indices (DJSI, FTSE4Good).', jsonld:'{\n  "@type": "WebPage",\n  "name": "ESG Ratings and Recognition"\n}' },
+
+  // IR
+  { id:'I1.1', name:'Results and financial performance', domain:'IR', priority:'Critical', source:'External', pen:0.95, vol:7.8, schema:'FinancialProduct', props:'name, description, annualPercentageRate, feesAndCommissionsSpecification', def:'Half-year and full-year results including P&L, balance sheet, cash flow, and accompanying narrative commentary.', jsonld:'{\n  "@type": "Report",\n  "name": "Full Year Results 2024",\n  "datePublished": "2025-02-20",\n  "about": { "@type": "Organization", "name": "Anglo American" }\n}' },
+  { id:'I1.2', name:'Annual report and accounts', domain:'IR', priority:'Critical', source:'External', pen:2.21, vol:8.5, schema:'Report', props:'name, datePublished, about, url, encodingFormat', def:'The statutory annual report and accounts including strategic report, governance report, and financial statements.', jsonld:'{\n  "@type": "Report",\n  "name": "Annual Report and Accounts 2024",\n  "datePublished": "2025-03-14",\n  "url": "https://www.angloamerican.com/investors/annual-reporting",\n  "encodingFormat": "application/pdf"\n}' },
+  { id:'I1.3', name:'Results presentations and webcasts', domain:'IR', priority:'High', source:'External', pen:0.75, vol:6.5, schema:'VideoObject', props:'name, uploadDate, duration, thumbnailUrl, contentUrl', def:'Analyst and investor presentations, earnings call webcasts, and associated slide decks for each results period.', jsonld:'{\n  "@type": "VideoObject",\n  "name": "Full Year Results Webcast 2024",\n  "uploadDate": "2025-02-20"\n}' },
+  { id:'I1.4', name:'Regulatory announcements and filings', domain:'IR', priority:'High', source:'External', pen:0.50, vol:6.2, schema:'NewsArticle', props:'headline, datePublished, url, author', def:'RNS regulatory news service announcements, LSE filings, SEC filings where applicable, and other regulatory disclosures.', jsonld:'{\n  "@type": "NewsArticle",\n  "headline": "Anglo American plc: Q1 2025 Production Report",\n  "datePublished": "2025-04-14"\n}' },
+  { id:'I1.5', name:'Financial outlook and guidance', domain:'IR', priority:'High', source:'External', pen:0.65, vol:5.5, schema:'Report', props:'name, datePublished, about', def:'Forward guidance on production volumes, capital expenditure, unit costs, and other quantitative financial outlook metrics.', jsonld:'{\n  "@type": "Report",\n  "name": "2025 Production and Cost Guidance"\n}' },
+  { id:'I2.1', name:'Capital allocation', domain:'IR', priority:'High', source:'External', pen:0.55, vol:5.0, schema:'WebPage', props:'name, about, description', def:'Capital allocation framework, investment priorities, return of capital policy, and portfolio management decisions.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Capital Allocation Framework"\n}' },
+  { id:'I2.2', name:'Dividends and buybacks', domain:'IR', priority:'High', source:'External', pen:0.02, vol:7.2, schema:'Dataset', props:'variableMeasured, value, datePublished', def:'Dividend history, current dividend policy, share buyback programmes, and dividend reinvestment plan details. Currently at near-zero AI penetration — primarily served via JS-rendered tools.', jsonld:'{\n  "@type": "Dataset",\n  "name": "Dividend History",\n  "variableMeasured": "Dividend per share",\n  "datePublished": "2025-02-20"\n}' },
+  { id:'I2.3', name:'Debt and fixed income', domain:'IR', priority:'High', source:'External', pen:0.45, vol:4.8, schema:'FinancialProduct', props:'name, description, interestRate, currency', def:'Debt maturity profile, credit ratings, bond issuances, and fixed income investor documentation.', jsonld:'{\n  "@type": "FinancialProduct",\n  "name": "Anglo American Debt Programme"\n}' },
+  { id:'I2.4', name:'M&A and corporate transactions', domain:'IR', priority:'High', source:'External', pen:0.60, vol:5.5, schema:'NewsArticle', props:'headline, datePublished, about', def:'Acquisition, disposal, merger, and joint venture announcements with supporting financial analysis.', jsonld:'{\n  "@type": "NewsArticle",\n  "headline": "Anglo American completes acquisition of...",\n  "datePublished": "2025-01-15"\n}' },
+  { id:'I3.1', name:'Corporate strategy', domain:'IR', priority:'High', source:'External', pen:0.68, vol:6.0, schema:'WebPage', props:'name, about, description', def:'Long-term strategic framework, portfolio positioning, competitive advantages, and strategic priorities communicated to investors.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Our Strategy",\n  "about": { "@type": "Thing", "name": "Corporate strategy framework" }\n}' },
+  { id:'I3.2', name:'Business model and value creation', domain:'IR', priority:'High', source:'External', pen:0.62, vol:5.8, schema:'WebPage', props:'name, description, about', def:'How the company creates, delivers, and captures value across its stakeholder ecosystem — the integrated reporting value creation model.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Our Business Model"\n}' },
+  { id:'I3.3', name:'Markets and competitive position', domain:'IR', priority:'Standard', source:'External', pen:0.50, vol:5.0, schema:'WebPage', props:'name, about', def:'Market environment analysis, competitive landscape, demand drivers, and the company\'s competitive position in each market.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Markets and Competitive Position"\n}' },
+  { id:'I3.4', name:'Investment case', domain:'IR', priority:'High', source:'Market', pen:0.72, vol:5.5, schema:'WebPage', props:'name, description, about', def:'Summarised investment proposition for potential and existing shareholders — the why-invest narrative.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Why Invest in Anglo American"\n}' },
+  { id:'I4.1', name:'Board composition and effectiveness', domain:'IR', priority:'High', source:'External', pen:0.45, vol:4.5, schema:'Person', props:'name, jobTitle, worksFor, sameAs', def:'Board member profiles, skills matrix, independence assessments, and board evaluation outcomes. Each director warrants a Person schema entry.', jsonld:'{\n  "@type": "Person",\n  "name": "Stuart Chambers",\n  "jobTitle": "Chairman",\n  "worksFor": { "@type": "Organization", "name": "Anglo American" }\n}' },
+  { id:'I4.2', name:'Executive remuneration', domain:'IR', priority:'High', source:'External', pen:0.42, vol:4.8, schema:'WebPage', props:'name, about', def:'Directors\' remuneration report, remuneration policy, long-term incentive plan outcomes, and pay-ratio disclosures.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Directors Remuneration Report 2024"\n}' },
+  { id:'I4.3', name:'Shareholder rights and AGM', domain:'IR', priority:'Standard', source:'External', pen:0.38, vol:4.5, schema:'Event', props:'name, startDate, location, organizer, url', def:'AGM notice, shareholder resolution details, voting results, and shareholder rights information.', jsonld:'{\n  "@type": "Event",\n  "name": "Annual General Meeting 2025",\n  "startDate": "2025-04-28",\n  "location": { "@type": "Place", "name": "London" }\n}' },
+  { id:'I4.4', name:'Risk management and principal risks', domain:'IR', priority:'High', source:'External', pen:0.48, vol:5.0, schema:'Report', props:'name, datePublished, about', def:'Principal and emerging risks, risk management framework, heat maps, and mitigating actions.', jsonld:'{\n  "@type": "Report",\n  "name": "Principal Risks Report 2024"\n}' },
+  { id:'I4.5', name:'Regulatory and legal matters', domain:'IR', priority:'Standard', source:'External', pen:0.35, vol:3.8, schema:'WebPage', props:'name, about', def:'Material legal proceedings, regulatory investigations, and contingent liabilities with financial disclosure.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Regulatory and Legal Matters"\n}' },
+  { id:'I4.6', name:'Corporate governance framework', domain:'IR', priority:'High', source:'External', pen:0.42, vol:4.2, schema:'WebPage', props:'name, about, description', def:'Overall corporate governance approach, code compliance, governance policies, and governance structure documentation.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Corporate Governance Framework"\n}' },
+  { id:'I5.1', name:'Investor events and presentations', domain:'IR', priority:'High', source:'Market', pen:0.65, vol:5.2, schema:'Event', props:'name, startDate, endDate, organizer, url, eventStatus', def:'Capital markets days, investor conferences, analyst briefings, and site visits.', jsonld:'{\n  "@type": "Event",\n  "name": "Capital Markets Day 2025",\n  "startDate": "2025-09-10",\n  "organizer": { "@type": "Organization", "name": "Anglo American" }\n}' },
+  { id:'I5.2', name:'Shareholder centre', domain:'IR', priority:'Standard', source:'External', pen:0.30, vol:4.8, schema:'WebPage', props:'name, about', def:'Shareholder registry information, share price data, DRIP details, and retail shareholder services.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Shareholder Centre"\n}' },
+  { id:'I5.3', name:'Analyst consensus and estimates', domain:'IR', priority:'Standard', source:'Market', pen:0.40, vol:3.5, schema:'WebPage', props:'name, about', def:'Sell-side analyst consensus estimates, coverage lists, and broker research links.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Analyst Coverage"\n}' },
+  { id:'I5.4', name:'ESG for investors', domain:'IR', priority:'High', source:'External', pen:0.55, vol:4.5, schema:'WebPage', props:'name, about, description', def:'ESG data and disclosures specifically formatted for institutional investors, ESG rating agencies, and index providers.', jsonld:'{\n  "@type": "WebPage",\n  "name": "ESG for Investors"\n}' },
+  { id:'I5.5', name:'Investor contacts and financial calendar', domain:'IR', priority:'Standard', source:'Market', pen:0.03, vol:6.5, schema:'Event', props:'name, startDate, organizer', def:'Financial calendar with reporting dates, IR contact details, and scheduled investor events. Currently near-zero AI penetration — JS-rendered calendar widget.', jsonld:'{\n  "@type": "Event",\n  "name": "Q1 2025 Production Report Publication",\n  "startDate": "2025-04-14"\n}' },
+  { id:'I5.6', name:'Debt investor centre', domain:'IR', priority:'High', source:'External', pen:0.38, vol:3.8, schema:'FinancialProduct', props:'name, description, interestRate', def:'Bond documentation, debt investor presentations, credit rating reports, and fixed income investor relations content.', jsonld:'{\n  "@type": "FinancialProduct",\n  "name": "Anglo American Bond Programme"\n}' },
+
+  // CC
+  { id:'C1.1', name:'Press releases and announcements', domain:'CC', priority:'Critical', source:'External', pen:0.73, vol:8.0, schema:'NewsArticle', props:'headline, datePublished, dateModified, author, publisher, url', def:'Formal press releases and regulatory announcements published via news wire and the corporate newsroom.', jsonld:'{\n  "@type": "NewsArticle",\n  "headline": "Anglo American announces Q1 2025 production results",\n  "datePublished": "2025-04-14",\n  "author": { "@type": "Organization", "name": "Anglo American" }\n}' },
+  { id:'C1.2', name:'News articles and editorial', domain:'CC', priority:'High', source:'External', pen:0.56, vol:7.2, schema:'NewsArticle', props:'headline, datePublished, author, articleBody', def:'Corporate news content, feature articles, and editorial pieces published in the company newsroom.', jsonld:'{\n  "@type": "NewsArticle",\n  "headline": "How we are decarbonising our operations",\n  "datePublished": "2025-03-20"\n}' },
+  { id:'C1.3', name:'Media contacts and enquiries', domain:'CC', priority:'Standard', source:'External', pen:0.40, vol:3.5, schema:'ContactPoint', props:'telephone, email, contactType, areaServed', def:'Press office contact details, spokesperson listings, and media enquiry submission process.', jsonld:'{\n  "@type": "ContactPoint",\n  "contactType": "press enquiries",\n  "email": "media@angloamerican.com"\n}' },
+  { id:'C1.4', name:'Multimedia library', domain:'CC', priority:'Standard', source:'External', pen:0.35, vol:3.8, schema:'ImageObject', props:'name, contentUrl, description, datePublished', def:'Image library, video archive, infographic downloads, and brand asset repository for media use.', jsonld:'{\n  "@type": "ImageObject",\n  "name": "Anglo American Operations Photography",\n  "contentUrl": "https://..."\n}' },
+  { id:'C2.1', name:'Purpose and values', domain:'CC', priority:'High', source:'External', pen:0.47, vol:5.0, schema:'WebPage', props:'name, about, description', def:'Corporate purpose statement, values framework, and the narrative connecting purpose to business strategy and stakeholder value.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Our Purpose and Values"\n}' },
+  { id:'C2.2', name:'Company history and heritage', domain:'CC', priority:'Standard', source:'External', pen:0.38, vol:4.0, schema:'WebPage', props:'name, about, description', def:'Corporate history timeline, founding story, heritage milestones, and the evolution of the company and its businesses.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Our History"\n}' },
+  { id:'C2.3', name:'Leadership and executive team', domain:'CC', priority:'Critical', source:'External', pen:0.45, vol:5.5, schema:'Person', props:'name, jobTitle, worksFor, description, sameAs', def:'Executive team profiles, biographies, areas of responsibility, and leadership team structure.', jsonld:'{\n  "@type": "Person",\n  "name": "Duncan Wanblad",\n  "jobTitle": "Chief Executive Officer",\n  "worksFor": { "@type": "Organization", "name": "Anglo American", "sameAs": "https://www.wikidata.org/wiki/Q47876" }\n}' },
+  { id:'C2.4', name:'Corporate story and about us', domain:'CC', priority:'Critical', source:'External', pen:0.42, vol:6.0, schema:'Organization', props:'name, description, url, logo, sameAs, foundingDate', def:'The primary corporate identity page. The Organization schema here is the anchor for all entity resolution — the sameAs Wikidata link is the most important structured data element on the entire site.', jsonld:'{\n  "@type": "Organization",\n  "name": "Anglo American",\n  "url": "https://www.angloamerican.com",\n  "sameAs": "https://www.wikidata.org/wiki/Q47876",\n  "foundingDate": "1917",\n  "logo": "https://www.angloamerican.com/logo.svg"\n}' },
+  { id:'C3.1', name:'Crisis and issues communication', domain:'CC', priority:'High', source:'External', pen:0.50, vol:3.5, schema:'NewsArticle', props:'headline, datePublished, about', def:'Corporate statements on incidents, issues, controversies, and crisis events. Includes formal responses to external events.', jsonld:'{\n  "@type": "NewsArticle",\n  "headline": "Anglo American statement on...",\n  "datePublished": "2025-01-10"\n}' },
+  { id:'C3.2', name:'Corporate positions and statements', domain:'CC', priority:'High', source:'External', pen:0.56, vol:4.5, schema:'WebPage', props:'name, about, description', def:'Formal corporate positions on material ESG, political, or societal topics — distinct from press releases.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Our Position on Climate Change"\n}' },
+  { id:'C3.3', name:'Regulatory and policy communication', domain:'CC', priority:'Standard', source:'External', pen:0.40, vol:3.2, schema:'WebPage', props:'name, about', def:'Consultation responses, regulatory submissions, and public policy communications.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Regulatory Submissions"\n}' },
+  { id:'C3.4', name:'Stakeholder correspondence', domain:'CC', priority:'Standard', source:'External', pen:0.35, vol:2.8, schema:'WebPage', props:'name, about', def:'Published open letters, stakeholder correspondence, and transparency disclosures in response to external requests.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Stakeholder Correspondence"\n}' },
+  { id:'C4.1', name:'Corporate campaigns and initiatives', domain:'CC', priority:'High', source:'External', pen:0.56, vol:5.2, schema:'WebPage', props:'name, description, about, url', def:'Named corporate campaigns, flagship programmes, and strategic initiatives with dedicated campaign identity.', jsonld:'{\n  "@type": "WebPage",\n  "name": "FutureSmart Mining",\n  "description": "Our approach to sustainable mining innovation"\n}' },
+  { id:'C4.2', name:'Thought leadership and opinion', domain:'CC', priority:'High', source:'External', pen:0.56, vol:4.8, schema:'Article', props:'headline, author, datePublished, articleBody', def:'Executive bylines, expert commentary, conference speeches, and opinion pieces published under corporate authorship.', jsonld:'{\n  "@type": "Article",\n  "headline": "The future of sustainable mining",\n  "author": { "@type": "Person", "name": "Duncan Wanblad" }\n}' },
+  { id:'C4.3', name:'Awards and recognition', domain:'CC', priority:'Standard', source:'External', pen:0.38, vol:3.0, schema:'WebPage', props:'name, about', def:'Industry awards, recognition milestones, and external validation of corporate performance.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Awards and Recognition"\n}' },
+  { id:'C4.4', name:'Corporate partnerships', domain:'CC', priority:'Standard', source:'External', pen:0.35, vol:3.2, schema:'WebPage', props:'name, about', def:'Strategic partnerships, sponsorships, and collaborative programmes with external organisations.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Partnerships and Sponsorships"\n}' },
+  { id:'C5.1', name:'Social media presence', domain:'CC', priority:'High', source:'External', pen:0.30, vol:2.5, schema:'ProfilePage', props:'name, url, sameAs', def:'Official social media channel listing and links to authoritative corporate social profiles.', jsonld:'{\n  "@type": "ProfilePage",\n  "name": "Anglo American on LinkedIn"\n}' },
+  { id:'C5.2', name:'Corporate website and digital estate', domain:'CC', priority:'High', source:'External', pen:0.35, vol:3.0, schema:'WebSite', props:'name, url, potentialAction', def:'The corporate website itself as a named, structured entity — including sitewide search action markup.', jsonld:'{\n  "@type": "WebSite",\n  "name": "Anglo American",\n  "url": "https://www.angloamerican.com"\n}' },
+  { id:'C5.3', name:'Content strategy and editorial calendar', domain:'CC', priority:'Standard', source:'External', pen:0.25, vol:2.0, schema:'WebPage', props:'name, about', def:'Published editorial calendar, content programme communications, and planned communication schedule disclosures.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Editorial Programme"\n}' },
+  { id:'CC6.1', name:'Supplier engagement and procurement', domain:'CC', priority:'Critical', source:'Portfolio', pen:0.50, vol:5.5, schema:'HowTo', props:'name, description, step, url', def:'Operational supplier onboarding process, procurement portal access, and registration process for prospective suppliers. Portfolio-derived node — no external standard covers this as a discrete corporate communication concept. IDX is the originating authority.', jsonld:'{\n  "@type": "HowTo",\n  "name": "How to become an Anglo American supplier",\n  "description": "Step-by-step guide to registering as a supplier",\n  "step": [\n    { "@type": "HowToStep", "text": "Register on our supplier portal" },\n    { "@type": "HowToStep", "text": "Complete due diligence assessment" },\n    { "@type": "HowToStep", "text": "Await procurement team review" }\n  ]\n}' },
+
+  // CT
+  { id:'T1.1', name:'Job listings and search', domain:'CT', priority:'Critical', source:'External', pen:0.06, vol:9.8, schema:'JobPosting', props:'title, hiringOrganization (with sameAs), jobLocation, employmentType, datePosted, validThrough, description', def:'Published vacancy listings — the primary interface through which candidates discover open roles. DIRECTLY VERIFIED: Anglo American job detail pages are JavaScript-rendered shells with no structured data. Job content is absent from raw HTML. 21.8M annual sessions to content invisible to AI.', jsonld:'{\n  "@type": "JobPosting",\n  "title": "Executive Head of Technical and Strategy",\n  "hiringOrganization": {\n    "@type": "Organization",\n    "name": "Anglo American",\n    "sameAs": "https://www.wikidata.org/wiki/Q47876"\n  },\n  "jobLocation": {\n    "@type": "Place",\n    "address": {\n      "addressCountry": "ZA",\n      "addressLocality": "Johannesburg"\n    }\n  },\n  "employmentType": "FULL_TIME",\n  "datePosted": "2026-04-01",\n  "validThrough": "2026-05-01"\n}' },
+  { id:'T1.2', name:'Application process and guidance', domain:'CT', priority:'High', source:'External', pen:0.12, vol:6.5, schema:'HowTo', props:'name, description, step', def:'Step-by-step guidance on the application process, from job search to offer — including assessment stages and timelines.', jsonld:'{\n  "@type": "HowTo",\n  "name": "How to apply at Anglo American",\n  "step": [\n    { "@type": "HowToStep", "text": "Search and apply online" },\n    { "@type": "HowToStep", "text": "Complete assessments" },\n    { "@type": "HowToStep", "text": "Attend interviews" }\n  ]\n}' },
+  { id:'T1.3', name:'Graduate and early careers', domain:'CT', priority:'High', source:'External', pen:0.30, vol:6.0, schema:'WebPage', props:'name, about, description', def:'Graduate programmes, apprenticeships, internships, and early careers pathways with specific entry-level recruitment content.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Graduate Careers at Anglo American",\n  "about": { "@type": "Thing", "name": "Graduate development programme" }\n}' },
+  { id:'T1.4', name:'Experienced hire and specialist recruitment', domain:'CT', priority:'Standard', source:'External', pen:0.10, vol:5.5, schema:'WebPage', props:'name, about', def:'Specialist and senior hire pathways, including executive search information and professional experience recruitment.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Experienced Professional Careers"\n}' },
+  { id:'T2.1', name:'Why work here', domain:'CT', priority:'Critical', source:'External', pen:0.25, vol:6.8, schema:'Organization', props:'name, description, employee, hasOfferCatalog', def:'The employer value proposition — what makes this organisation a compelling place to work. Includes culture narrative, mission alignment, and career development claims.', jsonld:'{\n  "@type": "Organization",\n  "name": "Anglo American",\n  "description": "A global mining company creating a better future",\n  "sameAs": "https://www.wikidata.org/wiki/Q47876"\n}' },
+  { id:'T2.2', name:'Rewards and benefits', domain:'CT', priority:'High', source:'External', pen:0.12, vol:5.5, schema:'WebPage', props:'name, about, description', def:'Salary, benefits, bonus structures, and employee rewards — disclosed at the appropriate level for candidate attraction.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Employee Benefits"\n}' },
+  { id:'T2.3', name:'Flexible and hybrid working', domain:'CT', priority:'High', source:'External', pen:0.12, vol:5.2, schema:'WebPage', props:'name, about', def:'Hybrid working policy, flexible working options, and remote work eligibility by role type and location.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Flexible Working"\n}' },
+  { id:'T2.4', name:'Learning and development', domain:'CT', priority:'High', source:'External', pen:0.15, vol:5.5, schema:'WebPage', props:'name, about, description', def:'Training programmes, professional development pathways, leadership academies, and continuing education support.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Learning and Development"\n}' },
+  { id:'T3.1', name:'Culture and ways of working', domain:'CT', priority:'High', source:'External', pen:0.20, vol:5.8, schema:'WebPage', props:'name, about, description', def:'Corporate culture narrative, leadership style, behavioural expectations, and ways of working programmes.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Life at Anglo American — Culture"\n}' },
+  { id:'T3.2', name:'Diversity, equity and inclusion in talent', domain:'CT', priority:'High', source:'External', pen:0.15, vol:5.0, schema:'WebPage', props:'name, about', def:'Inclusion in the talent and recruitment context — diverse hiring practices, ERGs, and inclusion in the candidate experience.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Inclusion at Anglo American"\n}' },
+  { id:'T3.3', name:'Wellbeing and mental health', domain:'CT', priority:'Standard', source:'External', pen:0.12, vol:4.5, schema:'WebPage', props:'name, about', def:'Employee wellbeing programmes, mental health support resources, and physical health initiatives.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Employee Wellbeing"\n}' },
+  { id:'T3.4', name:'Employee communities and networks', domain:'CT', priority:'Standard', source:'External', pen:0.12, vol:4.0, schema:'WebPage', props:'name, about', def:'Employee resource groups, professional networks, and community programmes available to employees.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Employee Networks"\n}' },
+  { id:'T4.1', name:'Mission and purpose at work', domain:'CT', priority:'High', source:'External', pen:0.22, vol:5.5, schema:'WebPage', props:'name, description, about', def:'How the corporate purpose connects to individual roles — the purpose-driven employer narrative for recruitment.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Working with Purpose"\n}' },
+  { id:'T4.2', name:'Social and environmental impact through work', domain:'CT', priority:'Standard', source:'External', pen:0.15, vol:4.5, schema:'WebPage', props:'name, about', def:'How employees contribute to social and environmental outcomes through their work — impact careers narrative.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Make an Impact"\n}' },
+  { id:'T4.3', name:'Innovation and technology careers', domain:'CT', priority:'High', source:'External', pen:0.18, vol:5.2, schema:'WebPage', props:'name, about', def:'Technology, data science, digital, and innovation-focused career pathways and role types.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Technology and Innovation Careers"\n}' },
+  { id:'T5.1', name:'Life at the organisation', domain:'CT', priority:'High', source:'External', pen:0.25, vol:5.5, schema:'WebPage', props:'name, about, description', def:'Day-in-the-life content, employee stories, culture photography, and testimonials from current employees.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Life at Anglo American"\n}' },
+  { id:'T5.2', name:'Locations and global opportunities', domain:'CT', priority:'Standard', source:'External', pen:0.14, vol:5.0, schema:'Place', props:'name, address, geo, containedInPlace', def:'Offices, operations, and countries where the company recruits — with location-specific career information.', jsonld:'{\n  "@type": "Place",\n  "name": "Anglo American South Africa Operations",\n  "address": { "addressCountry": "ZA" }\n}' },
+  { id:'T5.3', name:'Awards and employer recognition', domain:'CT', priority:'High', source:'External', pen:0.20, vol:3.8, schema:'WebPage', props:'name, about', def:'Employer of the Year awards, best workplace certifications, and third-party recognition of employer quality.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Employer Awards and Recognition"\n}' },
+
+  // BP
+  { id:'B1.1', name:'Brand portfolio overview', domain:'BP', priority:'Critical', source:'External', pen:0.16, vol:7.5, schema:'ItemList', props:'itemListElement (Brand per brand)', def:'Overview of the full brand or subsidiary portfolio — a structured listing of the brands, products, or businesses the company owns or operates.', jsonld:'{\n  "@type": "ItemList",\n  "name": "Anglo American Portfolio",\n  "itemListElement": [\n    { "@type": "Brand", "name": "De Beers" },\n    { "@type": "Brand", "name": "Anglo American Platinum" }\n  ]\n}' },
+  { id:'B1.2', name:'Individual brand pages', domain:'BP', priority:'High', source:'External', pen:0.37, vol:7.0, schema:'Brand', props:'name, url, logo, sameAs, description', def:'Each named brand or subsidiary with its own page — requiring its own Brand schema with a sameAs Wikidata link for entity resolution.', jsonld:'{\n  "@type": "Brand",\n  "name": "De Beers",\n  "url": "https://www.debeers.com",\n  "sameAs": "https://www.wikidata.org/wiki/Q47791"\n}' },
+  { id:'B1.3', name:'Brand heritage and history', domain:'BP', priority:'Standard', source:'External', pen:0.38, vol:4.5, schema:'WebPage', props:'name, about', def:'The heritage story for individual brands — founding narrative, historical milestones, and archival content.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Cartier Heritage"\n}' },
+  { id:'B2.1', name:'Product and service catalogue', domain:'BP', priority:'Critical', source:'External', pen:0.42, vol:7.8, schema:'Product', props:'name, description, brand, manufacturer, url, image', def:'The definitive listing of products and services offered — each product requiring its own Product schema for AI to answer product-specific queries.', jsonld:'{\n  "@type": "Product",\n  "name": "Trent 1000 Engine",\n  "manufacturer": { "@type": "Organization", "name": "Rolls-Royce" },\n  "brand": { "@type": "Brand", "name": "Rolls-Royce" }\n}' },
+  { id:'B2.2', name:'Product innovation and pipeline', domain:'BP', priority:'High', source:'External', pen:0.85, vol:6.5, schema:'TechArticle', props:'headline, description, about, datePublished', def:'R&D programmes, new product development, technology pipelines, and innovation roadmaps. Highest organic AI penetration in the BP domain at Rolls-Royce.', jsonld:'{\n  "@type": "TechArticle",\n  "headline": "Small Modular Reactor programme",\n  "about": { "@type": "Product", "name": "Rolls-Royce SMR" }\n}' },
+  { id:'B2.3', name:'Product sustainability and responsibility', domain:'BP', priority:'High', source:'External', pen:0.90, vol:6.0, schema:'Product', props:'name, sustainabilityNote, brand', def:'Sustainability credentials of specific products — lifecycle analysis, sustainable materials, environmental certifications.', jsonld:'{\n  "@type": "Product",\n  "name": "Trent XWB Engine",\n  "sustainabilityNote": "25% more fuel efficient than previous generation"\n}' },
+  { id:'B3.1', name:'Markets and geographies', domain:'BP', priority:'Standard', source:'External', pen:0.40, vol:5.5, schema:'WebPage', props:'name, about, description', def:'Geographic market presence, regional operations, and market-by-market business overview.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Our Markets"\n}' },
+  { id:'B3.2', name:'Customer and partner channels', domain:'BP', priority:'High', source:'External', pen:0.35, vol:4.5, schema:'WebPage', props:'name, about', def:'B2B customer relationships, distribution channels, and partner network descriptions.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Customer and Partner Network"\n}' },
+  { id:'B3.3', name:'Brand positioning and differentiation', domain:'BP', priority:'High', source:'External', pen:0.42, vol:5.2, schema:'WebPage', props:'name, description, about', def:'Competitive positioning, unique selling propositions, and the brand\'s differentiation narrative in its market.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Why Anglo American"\n}' },
+  { id:'B4.1', name:'Brand guidelines and identity', domain:'BP', priority:'Standard', source:'External', pen:0.28, vol:3.5, schema:'WebPage', props:'name, about', def:'Brand identity standards, logo usage guidelines, and brand asset documentation for external partners.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Brand Guidelines"\n}' },
+  { id:'B4.2', name:'Intellectual property and licensing', domain:'BP', priority:'Standard', source:'External', pen:0.25, vol:3.0, schema:'WebPage', props:'name, about', def:'Patent portfolio, IP licensing information, and intellectual property rights documentation.', jsonld:'{\n  "@type": "WebPage",\n  "name": "Intellectual Property"\n}' },
+  { id:'B4.3', name:'Product certifications and standards', domain:'BP', priority:'High', source:'External', pen:0.32, vol:4.0, schema:'Product', props:'name, certification, award', def:'Product compliance certifications, quality standards, and regulatory approvals for individual products.', jsonld:'{\n  "@type": "Product",\n  "name": "Cullinan Diamond",\n  "award": "Natural Diamond Council Certified"\n}' },
+  { id:'B5.1', name:'Consumer brand content', domain:'BP', priority:'High', source:'External', pen:0.37, vol:6.5, schema:'WebPage', props:'name, about, description', def:'Consumer-facing brand storytelling, product discovery content, and brand editorial for end-consumer audiences.', jsonld:'{\n  "@type": "WebPage",\n  "name": "The World of Cartier"\n}' },
+  { id:'B5.2', name:'B2B and industrial product content', domain:'BP', priority:'High', source:'External', pen:0.42, vol:6.0, schema:'TechArticle', props:'headline, about, description', def:'Technical product documentation, application case studies, and B2B sales content for industrial and commercial customers.', jsonld:'{\n  "@type": "TechArticle",\n  "headline": "Civil Aerospace Engine Specifications",\n  "about": { "@type": "Product", "name": "Trent 7000" }\n}' },
+  { id:'B6.1', name:'Operations and business units', domain:'BP', priority:'High', source:'External', pen:0.40, vol:6.5, schema:'Organization', props:'name, parentOrganization, location, description', def:'Subsidiary companies, divisions, business units, and operational entities with named identities — each warrants its own Organization schema with sameAs linkage.', jsonld:'{\n  "@type": "Organization",\n  "name": "Anglo American Platinum",\n  "parentOrganization": { "@type": "Organization", "name": "Anglo American" },\n  "sameAs": "https://www.wikidata.org/wiki/Q4754898"\n}' },
+];
+
+// ── PRIORITY SIZE MAP ─────────────────────────────────────────────────────────
+const PRIORITY_SIZE = { Critical: 14, High: 9, Standard: 5 };
+const PRIORITY_OPACITY = { Critical: 1.0, High: 0.85, Standard: 0.7 };
+
+// ── BUILD NODE GRID ───────────────────────────────────────────────────────────
+const grid = document.getElementById('node-grid');
+NODES.forEach(n => {
+  const dc = DOMAIN_COLORS[n.domain];
+  const btn = document.createElement('button');
+  btn.className = 'node-card';
+  btn.dataset.domain = n.domain;
+  btn.dataset.priority = n.priority;
+  btn.innerHTML = `
+    <div class="node-card-id mono">${n.id}</div>
+    <div class="node-card-name">${n.name}</div>
+    <div class="node-card-footer">
+      <div class="node-card-domain" style="background:${dc.light}"></div>
+      <span class="node-card-pen mono">${n.pen.toFixed(2)}%</span>
+    </div>`;
+  btn.addEventListener('click', () => openPanel(n));
+  grid.appendChild(btn);
+});
+
+// ── GRID FILTERS ─────────────────────────────────────────────────────────────
+document.getElementById('grid-filters').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const f = btn.dataset.filter;
+  document.querySelectorAll('.node-card').forEach(c => {
+    const show = f === 'all' || c.dataset.domain === f || c.dataset.priority === f;
+    c.classList.toggle('hidden', !show);
+  });
+});
+
+// ── NODE PANEL ────────────────────────────────────────────────────────────────
+const panel = document.getElementById('node-panel');
+document.getElementById('panel-close').addEventListener('click', () => panel.classList.remove('open'));
+
+function priorityBadge(p) {
+  const cls = { Critical: 'priority-critical', High: 'priority-high', Standard: 'priority-standard' }[p];
+  return `<span class="panel-priority-badge ${cls}">${p}</span>`;
+}
+
+function openPanel(n) {
+  const dc = DOMAIN_COLORS[n.domain];
+  document.getElementById('panel-id').textContent = n.id;
+  document.getElementById('panel-name').textContent = n.name;
+  document.getElementById('panel-def').textContent = n.def;
+  document.getElementById('panel-type').textContent = `schema.org/${n.schema}`;
+  document.getElementById('panel-props').textContent = n.props;
+  const penPct = Math.min(n.pen / 2.5 * 100, 100);
+  document.getElementById('panel-pen-fill').style.width = penPct + '%';
+  document.getElementById('panel-pen-fill').style.background = dc.light;
+  document.getElementById('panel-pen-val').textContent = n.pen.toFixed(2) + '%';
+  document.getElementById('panel-jsonld').innerHTML = syntaxHighlight(n.jsonld);
+  document.getElementById('panel-meta').innerHTML = `
+    <div class="panel-meta-item">
+      <div class="panel-meta-label mono">Domain</div>
+      <div class="panel-meta-val" style="color:${dc.light}">${n.domain}</div>
+    </div>
+    <div class="panel-meta-item">
+      <div class="panel-meta-label mono">AEO priority</div>
+      <div class="panel-meta-val">${priorityBadge(n.priority)}</div>
+    </div>
+    <div class="panel-meta-item">
+      <div class="panel-meta-label mono">Source</div>
+      <div class="panel-meta-val" style="font-size:12px;color:var(--text-secondary)">${n.source}</div>
+    </div>
+    <div class="panel-meta-item">
+      <div class="panel-meta-label mono">Node ID</div>
+      <div class="panel-meta-val mono" style="font-size:12px;">${n.id}</div>
+    </div>`;
+  panel.classList.add('open');
+}
+
+function syntaxHighlight(json) {
+  return json
+    .replace(/("[@a-zA-Z0-9_]+")\s*:/g, '<span style="color:#4a9de8">$1</span>:')
+    .replace(/:\s*(".*?")/g, ': <span style="color:#8fbf6a">$1</span>')
+    .replace(/[{}[\]]/g, '<span style="color:#c4a83a">$&</span>');
+}
+
+// ── SCATTER PLOT ──────────────────────────────────────────────────────────────
+const canvas = document.getElementById('scatter-canvas');
+const ctx = canvas.getContext('2d');
+let activeFilter = 'all';
+let bubbles = [];
+
+function computeBubbles() {
+  const W = canvas.width, H = canvas.height;
+  const PAD = { left: 60, right: 40, top: 30, bottom: 50 };
+  const plotW = W - PAD.left - PAD.right;
+  const plotH = H - PAD.top - PAD.bottom;
+  const minVol = Math.log(Math.min(...NODES.map(n => n.vol)));
+  const maxVol = Math.log(Math.max(...NODES.map(n => n.vol)));
+  const maxPen = Math.max(...NODES.map(n => n.pen));
+  bubbles = NODES.map(n => {
+    const x = PAD.left + ((Math.log(n.vol) - minVol) / (maxVol - minVol)) * plotW;
+    const y = PAD.top + (1 - n.pen / (maxPen * 1.1)) * plotH;
+    const r = PRIORITY_SIZE[n.priority];
+    return { ...n, x, y, r };
+  });
+  return { PAD, plotW, plotH, maxPen };
+}
+
+function drawScatter() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = canvas.offsetWidth * dpr;
+  canvas.height = 520 * dpr;
+  canvas.style.height = '520px';
+  ctx.scale(dpr, dpr);
+  const W = canvas.offsetWidth, H = 520;
+  const { PAD, plotH, maxPen } = computeBubbles();
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const y = PAD.top + (i / 5) * plotH;
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(W - PAD.right, y); ctx.stroke();
+    const val = ((1 - i / 5) * maxPen * 1.1).toFixed(1);
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.font = '10px DM Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(val + '%', PAD.left - 6, y + 3);
+  }
+
+  // Axis labels
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.font = '10px DM Mono, monospace';
+  ctx.textAlign = 'center';
+  ['Low', 'Med', 'High', 'Very High'].forEach((l, i) => {
+    const x = PAD.left + ((i + 0.5) / 4) * (W - PAD.left - PAD.right);
+    ctx.fillText(l, x, H - PAD.bottom + 20);
+  });
+
+  // Bubbles
+  bubbles.forEach(b => {
+    const hidden = activeFilter !== 'all' && b.domain !== activeFilter;
+    const dc = DOMAIN_COLORS[b.domain];
+    const alpha = hidden ? 0.08 : PRIORITY_OPACITY[b.priority];
+
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fillStyle = hexToRgba(dc.light, alpha * 0.25);
+    ctx.fill();
+    ctx.strokeStyle = hexToRgba(dc.light, alpha * 0.8);
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Label for critical nodes
+    if (b.priority === 'Critical' && !hidden) {
+      ctx.fillStyle = hexToRgba('#e8e6e0', 0.7);
+      ctx.font = '9px DM Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(b.id, b.x, b.y + b.r + 11);
+    }
+  });
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// Tooltip
+const tooltip = document.getElementById('tooltip');
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  let hit = null;
+  for (const b of bubbles) {
+    const dist = Math.hypot(mx - b.x, my - b.y);
+    if (dist <= b.r + 4) { hit = b; break; }
+  }
+  if (hit) {
+    document.getElementById('tt-id').textContent = hit.id;
+    document.getElementById('tt-name').textContent = hit.name;
+    const dc = DOMAIN_COLORS[hit.domain];
+    document.getElementById('tt-pen').style.color = dc.light;
+    document.getElementById('tt-pen').textContent = hit.pen.toFixed(2) + '% AI penetration · ' + hit.priority;
+    tooltip.style.left = (e.clientX + 12) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+    tooltip.classList.add('visible');
+    canvas.style.cursor = 'pointer';
+  } else {
+    tooltip.classList.remove('visible');
+    canvas.style.cursor = 'crosshair';
+  }
+});
+
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  for (const b of bubbles) {
+    if (Math.hypot(mx - b.x, my - b.y) <= b.r + 4) { openPanel(b); break; }
+  }
+});
+
+canvas.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+
+// Domain legend filter
+document.querySelectorAll('.legend-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.legend-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    activeFilter = item.dataset.domain;
+    drawScatter();
+  });
+});
+
+window.addEventListener('resize', () => { drawScatter(); });
+
+// ── SCROLL REVEALS ────────────────────────────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // Trigger bar chart animation
+      if (e.target.querySelector('.bar-fill')) {
+        e.target.querySelectorAll('.bar-row').forEach(r => {
+          setTimeout(() => r.classList.add('visible'), 100);
+        });
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  setTimeout(drawScatter, 100);
+});
+</script>
+</body>
+</html>
