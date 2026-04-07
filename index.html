@@ -5,17 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Semantic Spine — IDX</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0c0f;
-  --surface: #111318;
-  --surface2: #171b22;
+  /* IDX brand tokens */
+  --licorice: #12061A;
+  --floral-white: #F7F6EE;
+  --rose: #FF006F;
+  --lemon-lime: #EEFF00;
+  --aquamarine: #00FFC9;
+
+  /* Semantic mappings */
+  --bg: #12061A;
+  --surface: #1A1025;
+  --surface2: #221535;
   --border: rgba(255,255,255,0.07);
   --border-hover: rgba(255,255,255,0.15);
-  --text: #e8e6e0;
-  --text-secondary: #7a7872;
-  --text-tertiary: #454340;
+  --text: #F7F6EE;
+  --text-secondary: #8a867e;
+  --text-tertiary: #504c48;
   --esg: #2d7a4f;
   --esg-light: #4ab87a;
   --ir: #1e5fa8;
@@ -26,10 +34,10 @@
   --ct-light: #9a6fd4;
   --bp: #6b5a1e;
   --bp-light: #c4a83a;
-  --critical: #d44a3a;
-  --high: #d4843a;
-  --standard: #4a7a4a;
-  --accent: #c4a83a;
+  --critical: #CC3333;
+  --high: #E8A317;
+  --standard: #27AE60;
+  --accent: #FF006F;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -39,14 +47,14 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Instrument Sans', sans-serif;
+  font-family: 'IDX Sans', 'Inter', system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   overflow-x: hidden;
 }
 
-/* TYPOGRAPHY */
-.serif { font-family: 'DM Serif Display', serif; }
+/* TYPOGRAPHY — IDX brand */
+.serif { font-family: 'IDX Headline', 'DM Serif Display', serif; }
 .mono { font-family: 'DM Mono', monospace; }
 
 /* NAV */
@@ -55,13 +63,14 @@ nav {
   padding: 1rem 3rem;
   display: flex; align-items: center; justify-content: space-between;
   border-bottom: 1px solid var(--border);
-  background: rgba(10,12,15,0.92);
+  border-top: 3px solid var(--rose);
+  background: rgba(18,6,26,0.92);
   backdrop-filter: blur(12px);
 }
 .nav-logo { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary); letter-spacing: 0.15em; text-transform: uppercase; }
 .nav-links { display: flex; gap: 2rem; }
 .nav-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; letter-spacing: 0.04em; transition: color 0.2s; }
-.nav-links a:hover { color: var(--text); }
+.nav-links a:hover { color: var(--rose); }
 
 /* SECTIONS */
 section { padding: 8rem 3rem; max-width: 1400px; margin: 0 auto; }
@@ -78,8 +87,8 @@ section.full-bleed { max-width: none; padding: 8rem 3rem; }
 }
 .hero-bg {
   position: absolute; inset: 0; z-index: 0;
-  background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(196,168,58,0.04) 0%, transparent 70%),
-              radial-gradient(ellipse 40% 40% at 20% 80%, rgba(45,122,79,0.06) 0%, transparent 60%);
+  background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(255,0,111,0.04) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0,255,201,0.04) 0%, transparent 60%);
 }
 .hero-grid {
   position: absolute; inset: 0; z-index: 0;
@@ -89,9 +98,9 @@ section.full-bleed { max-width: none; padding: 8rem 3rem; }
   mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 30%, transparent 80%);
 }
 .hero-content { position: relative; z-index: 1; }
-.hero-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 2rem; }
+.hero-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--rose); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 2rem; }
 .hero-title { font-family: 'DM Serif Display', serif; font-size: clamp(3rem, 7vw, 6.5rem); line-height: 1.0; color: var(--text); max-width: 14ch; margin-bottom: 2rem; }
-.hero-title em { font-style: italic; color: var(--accent); }
+.hero-title em { font-style: italic; color: var(--rose); }
 .hero-sub { font-size: 1.1rem; color: var(--text-secondary); max-width: 55ch; line-height: 1.7; margin-bottom: 3rem; }
 .hero-stats { display: flex; gap: 3rem; }
 .hero-stat-n { font-family: 'DM Serif Display', serif; font-size: 2.8rem; color: var(--text); display: block; }
@@ -118,12 +127,12 @@ section.full-bleed { max-width: none; padding: 8rem 3rem; }
 .bar-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary); }
 
 /* MECHANISM SECTION */
-.mechanism-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem; }
+.mechanism-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--rose); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem; }
 .mechanism-title { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); max-width: 20ch; margin-bottom: 3rem; }
 .chain { display: grid; grid-template-columns: repeat(4, 1fr) ; gap: 0; margin-bottom: 4rem; position: relative; }
 .chain::before {
   content: ''; position: absolute; top: 2.5rem; left: 12%; right: 12%;
-  height: 1px; background: linear-gradient(90deg, transparent, var(--accent), var(--accent), transparent);
+  height: 1px; background: linear-gradient(90deg, transparent, var(--rose), var(--rose), transparent);
   opacity: 0.3;
 }
 .chain-step { padding: 0 1rem; position: relative; }
@@ -153,14 +162,14 @@ section.full-bleed { max-width: none; padding: 8rem 3rem; }
 .code-header-tag {
   font-family: 'DM Mono', monospace; font-size: 10px;
   padding: 2px 8px; border-radius: 3px;
-  background: rgba(196,168,58,0.12); color: var(--accent);
+  background: rgba(255,0,111,0.12); color: var(--rose);
 }
 .code-body { padding: 1.5rem; overflow-x: auto; }
 .code-body pre { font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.9; color: var(--text-secondary); }
 .code-body .k { color: var(--ir-light); }
 .code-body .s { color: #8fbf6a; }
 .code-body .c { color: var(--text-tertiary); font-style: italic; }
-.code-body .h { color: var(--accent); }
+.code-body .h { color: var(--rose); }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 
 /* SCATTER SECTION */
@@ -206,23 +215,23 @@ section.full-bleed { max-width: none; padding: 8rem 3rem; }
 .panel-schema-props { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-secondary); margin-top: 0.25rem; line-height: 1.6; }
 .panel-pen { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem; }
 .panel-pen-bar { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-.panel-pen-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+.panel-pen-fill { height: 100%; border-radius: 3px; background: var(--rose); }
 .panel-pen-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary); }
 .panel-priority-badge {
   display: inline-flex; align-items: center; gap: 0.3rem;
   font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.05em;
   padding: 3px 8px; border-radius: 3px;
 }
-.priority-critical { background: rgba(212,74,58,0.15); color: #e87060; }
-.priority-high { background: rgba(212,132,58,0.15); color: #e8a060; }
-.priority-standard { background: rgba(74,122,74,0.15); color: #80b880; }
+.priority-critical { background: rgba(204,51,51,0.15); color: #e05050; }
+.priority-high { background: rgba(232,163,23,0.15); color: #E8A317; }
+.priority-standard { background: rgba(39,174,96,0.15); color: #27AE60; }
 
 /* NODE EXPLORER GRID */
 .explorer-section { padding-top: 4rem; }
 .explorer-filters { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
 .filter-btn { background: none; border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-family: 'Instrument Sans', sans-serif; transition: all 0.2s; }
 .filter-btn:hover { border-color: var(--border-hover); color: var(--text); }
-.filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(196,168,58,0.06); }
+.filter-btn.active { border-color: var(--rose); color: var(--rose); background: rgba(255,0,111,0.06); }
 .node-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--border); }
 .node-card {
   background: var(--bg); padding: 1rem 1.25rem;
@@ -271,7 +280,7 @@ footer { padding: 3rem; border-top: 1px solid var(--border); display: flex; alig
 .tt-pen { font-family: 'DM Mono', monospace; font-size: 11px; }
 
 /* DIVIDER */
-.divider { width: 40px; height: 2px; background: var(--accent); margin: 1.5rem 0; opacity: 0.5; }
+.divider { width: 40px; height: 2px; background: var(--rose); margin: 1.5rem 0; opacity: 0.7; }
 
 /* REVEAL ANIMATIONS */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16,1,0.3,1); }
@@ -308,10 +317,10 @@ footer { padding: 3rem; border-top: 1px solid var(--border); display: flex; alig
   <div class="hero-content">
     <div class="hero-label">IDX · Internal working document · April 2026</div>
     <h1 class="hero-title serif">The Semantic <em>Spine</em></h1>
-    <p class="hero-sub">A governed controlled vocabulary for the corporate digital estate — 107 precisely defined concepts that connect content, schema.org markup, and AI representation into a single compounding system.</p>
+    <p class="hero-sub">A governed controlled vocabulary for the corporate digital estate — 105 precisely defined concepts that connect content, schema.org markup, and AI representation into a single compounding system.</p>
     <div class="hero-stats">
       <div>
-        <span class="hero-stat-n serif">107</span>
+        <span class="hero-stat-n serif">105</span>
         <span class="hero-stat-l mono">Canonical nodes</span>
       </div>
       <div>
@@ -338,7 +347,7 @@ footer { padding: 3rem; border-top: 1px solid var(--border); display: flex; alig
 <section id="problem">
   <div class="problem-grid">
     <div class="problem-text reveal">
-      <div class="mono" style="font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1rem;">01 — The problem</div>
+      <div class="mono" style="font-size:11px;color:var(--rose);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1rem;">01 — The problem</div>
       <h2 class="serif">The content exists. The AI cannot read it.</h2>
       <div class="divider"></div>
       <p>AI platforms — ChatGPT, Gemini, Perplexity, Copilot — have become a primary channel through which investors, analysts, job seekers, and procurement managers seek corporate information. AI referral traffic across the IDX portfolio has grown 240-fold since January 2024.</p>
@@ -400,7 +409,7 @@ footer { padding: 3rem; border-top: 1px solid var(--border); display: flex; alig
     <div class="chain">
       <div class="chain-step">
         <div class="chain-n mono">01</div>
-        <div class="chain-icon" style="background:rgba(196,168,58,0.08);border-color:rgba(196,168,58,0.2);color:var(--accent);">NODE</div>
+        <div class="chain-icon" style="background:rgba(255,0,111,0.08);border-color:rgba(255,0,111,0.2);color:var(--rose);">NODE</div>
         <div class="chain-title">Spine node definition</div>
         <div class="chain-desc">A precisely governed concept. T1.1 — Job listings and search: the primary interface through which candidates discover open roles. One definition, one meaning, across every client.</div>
       </div>
@@ -492,8 +501,8 @@ footer { padding: 3rem; border-top: 1px solid var(--border); display: flex; alig
   <div class="section-inner">
     <div class="scatter-header reveal">
       <div>
-        <div class="mono" style="font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.75rem;">03 — The vocabulary</div>
-        <h2 class="serif scatter-title">107 nodes across five domains — click any node to explore</h2>
+        <div class="mono" style="font-size:11px;color:var(--rose);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.75rem;">03 — The vocabulary</div>
+        <h2 class="serif scatter-title">105 nodes across five domains — click any node to explore</h2>
         <p style="color:var(--text-secondary);font-size:14px;margin-top:0.75rem;max-width:55ch;">Each bubble is a canonical spine node. Position: x-axis = relative traffic volume (log scale), y-axis = observed AI penetration. Size = AEO priority. Click to open the node definition, schema.org mapping, and JSON-LD example.</p>
       </div>
       <div class="domain-legend">
@@ -518,7 +527,7 @@ footer { padding: 3rem; border-top: 1px solid var(--border); display: flex; alig
 <section style="padding-top:4rem;padding-bottom:2rem;">
   <div class="reveal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-      <div class="mono" style="font-size:11px;color:var(--text-secondary);letter-spacing:0.08em;">ALL 107 NODES — click any to open definition panel</div>
+      <div class="mono" style="font-size:11px;color:var(--text-secondary);letter-spacing:0.08em;">ALL 105 NODES — click any to open definition panel</div>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;" id="grid-filters">
         <button class="filter-btn active" data-filter="all">All</button>
         <button class="filter-btn" data-filter="Critical">Critical</button>
@@ -538,7 +547,7 @@ footer { padding: 3rem; border-top: 1px solid var(--border); display: flex; alig
 <!-- OPPORTUNITY -->
 <section id="opportunity" style="border-top:1px solid var(--border);">
   <div class="reveal">
-    <div class="mono" style="font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1rem;">04 — The opportunity</div>
+    <div class="mono" style="font-size:11px;color:var(--rose);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1rem;">04 — The opportunity</div>
     <h2 class="serif" style="font-size:clamp(1.8rem,3.5vw,2.8rem);max-width:22ch;margin-bottom:1rem;">What changes when the spine is in place</h2>
     <p style="color:var(--text-secondary);max-width:58ch;line-height:1.8;">Each node carries a schema.org mapping, an AEO priority rating, and a freshness threshold. When the infrastructure is in place, AI representation assessment becomes a repeatable managed service — not a series of one-off audits.</p>
     <div class="opportunity-grid">
@@ -567,8 +576,8 @@ footer { padding: 3rem; border-top: 1px solid var(--border); display: flex; alig
         <div class="opp-label mono">BP nodes</div>
         <div class="opp-desc">Brand portfolio, product catalogue, innovation pipeline, operations. B2.2 — Product innovation — achieves 0.85% AI penetration organically at Rolls-Royce. Named programme schema would push that further.</div>
       </div>
-      <div class="opp-card" style="border-color:rgba(196,168,58,0.2);">
-        <div class="opp-n serif" style="color:var(--accent);">5</div>
+      <div class="opp-card" style="border-color:rgba(255,0,111,0.2);">
+        <div class="opp-n serif" style="color:var(--rose);">5</div>
         <div class="opp-label mono">Portfolio-derived nodes</div>
         <div class="opp-desc">E2.1, E2.4, E3.5, E3.6, E4.4 — originated by IDX from portfolio traffic evidence. No external standard covers these concepts at this specificity. These are IDX's original contribution to the vocabulary of corporate digital communication.</div>
       </div>
@@ -578,8 +587,9 @@ footer { padding: 3rem; border-top: 1px solid var(--border); display: flex; alig
 
 <footer>
   <span class="footer-logo">IDX · Semantic Spine · v1.1</span>
-  <span class="footer-meta mono">Schema Owner: Simon Heath · April 2026 · 107 canonical nodes</span>
+  <span class="footer-meta mono">Schema Owner: Simon Heath · April 2026 · 105 canonical nodes</span>
 </footer>
+<div style="text-align:center;padding:1rem 3rem 2rem;font-family:'IDX Serif','DM Serif Display',serif;font-style:italic;font-size:11px;color:var(--text-tertiary);">Prepared by IDX using the Mercury platform</div>
 
 <!-- NODE PANEL -->
 <div id="node-panel" class="node-panel">
@@ -825,9 +835,9 @@ function openPanel(n) {
 
 function syntaxHighlight(json) {
   return json
-    .replace(/("[@a-zA-Z0-9_]+")\s*:/g, '<span style="color:#4a9de8">$1</span>:')
-    .replace(/:\s*(".*?")/g, ': <span style="color:#8fbf6a">$1</span>')
-    .replace(/[{}[\]]/g, '<span style="color:#c4a83a">$&</span>');
+    .replace(/("[@a-zA-Z0-9_]+")\s*:/g, '<span style="color:#FF006F">$1</span>:')
+    .replace(/:\s*(".*?")/g, ': <span style="color:#00FFC9">$1</span>')
+    .replace(/[{}[\]]/g, '<span style="color:#F7F6EE;opacity:0.4">$&</span>');
 }
 
 // ── SCATTER PLOT ──────────────────────────────────────────────────────────────
