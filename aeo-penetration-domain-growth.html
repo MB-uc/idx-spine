@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI traffic across the IDX portfolio — 2024–Q1 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --licorice:#110719;--lemon-lime:#EEFF00;--rose:#FF006F;--aquamarine:#11FFCC;
+    --mid-grey:#AAAAAA;--light-card:#1e0f2a;--border:#2a1040;--pure-white:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--licorice);color:var(--pure-white);font-family:Arial,Helvetica,system-ui,sans-serif;font-size:14px;line-height:1.5;}
+
+  /* —— TAB NAV —— */
+  .tab-nav{display:flex;border-bottom:3px solid var(--border);background:#0d0415;padding:0 48px;position:sticky;top:0;z-index:100;gap:4px;}
+  .tab-btn{padding:0 28px;height:64px;background:transparent;border:none;border-bottom:4px solid transparent;color:#666;font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-bottom:-3px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;min-width:200px;}
+  .tab-btn .tab-num{font-size:18px;font-weight:700;color:#333;transition:color .2s;line-height:1;}
+  .tab-btn .tab-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#555;transition:color .2s;}
+  .tab-btn:hover .tab-num{color:var(--pure-white);}
+  .tab-btn:hover .tab-label{color:var(--mid-grey);}
+  .tab-btn:hover{border-bottom-color:#333;}
+  .tab-btn.active{border-bottom-color:var(--lemon-lime);background:rgba(238,255,0,.04);}
+  .tab-btn.active .tab-num{color:var(--lemon-lime);}
+  .tab-btn.active .tab-label{color:var(--pure-white);}
+  .tab-divider{width:1px;background:var(--border);align-self:stretch;margin:16px 0;}
+  .tab-pane{display:none;}
+  .tab-pane.active{display:block;}
+
+  /* —— HEADER —— */
+  .header{padding:48px 64px 40px;border-bottom:1px solid var(--border);position:relative;}
+  .header::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--lemon-lime);}
+  .header-meta{font-size:11px;letter-spacing:.12em;color:var(--mid-grey);text-transform:uppercase;margin-bottom:16px;}
+  .header h1{font-size:38px;font-weight:700;line-height:1.15;color:var(--pure-white);max-width:820px;margin-bottom:16px;font-family:"IDX Headline","IDXHeadline-Heavy",Georgia,serif;}
+  .header h1 em{font-style:normal;color:var(--lemon-lime);}
+  .header-sub{font-size:15px;color:var(--mid-grey);max-width:680px;line-height:1.6;}
+
+  /* —— SECTIONS —— */
+  .section{padding:52px 64px;border-bottom:1px solid var(--border);}
+  .section-label{font-size:10px;letter-spacing:.16em;color:var(--lemon-lime);text-transform:uppercase;margin-bottom:12px;}
+  .section-title{font-size:22px;font-weight:700;color:var(--pure-white);margin-bottom:8px;line-height:1.25;}
+  .section-sub{font-size:14px;color:var(--mid-grey);max-width:680px;margin-bottom:36px;line-height:1.6;}
+
+  /* —— CHART WRAP —— */
+  .chart-wrap{background:var(--light-card);border:1px solid var(--border);border-radius:4px;padding:28px 28px 20px;}
+  .chart-wrap+.chart-wrap{margin-top:24px;}
+  .chart-red-rule{height:3px;background:#e3120b;margin-bottom:12px;border-radius:1px;}
+  .chart-title{font-family:Georgia,serif;font-size:15px;font-weight:bold;color:var(--pure-white);margin-bottom:4px;line-height:1.3;}
+  .chart-subtitle{font-size:12px;color:var(--mid-grey);margin-bottom:14px;line-height:1.5;}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:14px;font-size:11px;color:var(--mid-grey);}
+  .chart-legend span{display:flex;align-items:center;gap:6px;cursor:pointer;transition:opacity .15s;user-select:none;}
+  .chart-legend span.dimmed{opacity:.25;}
+  .legend-line{width:22px;height:3px;border-radius:1px;display:inline-block;}
+  .legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .chart-canvas-wrap{position:relative;width:100%;height:300px;}
+  .chart-source{font-size:10px;color:#555;margin-top:10px;}
+
+  /* —— CONTROLS —— */
+  .toggle-row{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+  .toggle-btn{padding:6px 14px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--mid-grey);font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+  .toggle-btn:hover{border-color:var(--lemon-lime);color:var(--lemon-lime);}
+  .toggle-btn.active{background:var(--lemon-lime);border-color:var(--lemon-lime);color:var(--licorice);font-weight:700;}
+
+  /* —— CLIENT BARS —— */
+  .client-grid{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+  .client-row{display:flex;align-items:center;gap:12px;position:relative;}
+  .client-name{width:140px;font-size:12px;color:var(--pure-white);flex-shrink:0;text-align:right;padding-right:4px;}
+  .client-bar-wrap{flex:1;height:22px;background:var(--border);border-radius:2px;overflow:visible;display:flex;cursor:default;position:relative;}
+  .client-seg{height:22px;transition:width .4s;}
+  .client-val{width:60px;font-size:11px;color:var(--mid-grey);flex-shrink:0;}
+  .c-tip{position:absolute;bottom:28px;left:0;background:#0d0415;border:1px solid var(--border);padding:8px 12px;border-radius:3px;font-size:11px;color:var(--pure-white);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20;}
+  .client-row:hover .c-tip{opacity:1;}
+
+  /* —— DOMAIN CARDS —— */
+  .domain-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:40px;}
+  @media(max-width:900px){.domain-grid{grid-template-columns:repeat(3,1fr);}}
+  .domain-card{background:var(--light-card);border:1px solid var(--border);border-radius:4px;padding:20px 18px;cursor:pointer;transition:border-color .15s;}
+  .domain-card:hover,.domain-card.active{border-color:var(--lemon-lime);}
+  .domain-card.active .domain-name{color:var(--lemon-lime);}
+  .domain-name{font-size:13px;font-weight:700;color:var(--pure-white);margin-bottom:8px;letter-spacing:.04em;}
+  .domain-count{font-size:28px;font-weight:700;line-height:1;margin-bottom:4px;}
+  .domain-count-label{font-size:10px;color:var(--mid-grey);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+  .priority-pills{display:flex;flex-direction:column;gap:4px;}
+  .pill{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--mid-grey);}
+  .pill-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .dot-critical{background:#e3120b;}.dot-high{background:#f97a1f;}.dot-standard{background:#555;}
+  .domain-detail{background:var(--light-card);border:1px solid var(--lemon-lime);border-radius:4px;padding:24px 28px;margin-bottom:32px;display:none;}
+  .domain-detail.visible{display:block;}
+  .detail-title{font-size:14px;font-weight:700;color:var(--lemon-lime);margin-bottom:16px;letter-spacing:.06em;text-transform:uppercase;}
+  .node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+  .node-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);}
+  .node-id{color:var(--mid-grey);font-size:10px;flex-shrink:0;padding-top:1px;min-width:32px;}
+  .node-label{color:var(--pure-white);line-height:1.3;}
+
+  /* —— FINDING CARDS —— */
+  .findings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;}
+  @media(max-width:900px){.findings-grid{grid-template-columns:1fr;}}
+  .finding-card{background:var(--light-card);border:1px solid var(--border);border-radius:4px;padding:20px;}
+  .finding-card.g{border-color:var(--lemon-lime);}
+  .finding-card.r{border-color:#e3120b;}
+  .finding-card.o{border-color:#f97a1f;}
+  .finding-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid-grey);margin-bottom:8px;}
+  .finding-num{font-size:32px;font-weight:700;line-height:1;margin-bottom:6px;}
+  .finding-body{font-size:13px;color:var(--mid-grey);line-height:1.6;}
+  .finding-body strong{color:var(--pure-white);}
+
+  /* —— PERIOD TABLE —— */
+  .period-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .period-table th{text-align:left;padding:8px 12px;color:var(--mid-grey);font-size:10px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border);}
+  .period-table td{padding:9px 12px;border-bottom:1px solid #1a0a28;vertical-align:middle;}
+  .period-table tr:last-child td{border-bottom:none;}
+  .period-table tr:hover td{background:#1a0a28;}
+  .pos{color:var(--lemon-lime);}.neg{color:#e3120b;}.neut{color:var(--mid-grey);}
+
+  /* —— ENGAGEMENT TABLE —— */
+  .eng-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .eng-table th{text-align:center;padding:8px 10px;color:var(--mid-grey);font-size:10px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;}
+  .eng-table th.left{text-align:left;}
+  .eng-table td{padding:8px 10px;border-bottom:1px solid #1a0a28;text-align:center;font-variant-numeric:tabular-nums;}
+  .eng-table td.left{text-align:left;}
+  .eng-table tr:last-child td{border-bottom:none;}
+  .eng-table tr:hover td{background:#1a0a28;}
+  .eng-table tr.inflect td{background:#1a0f28;font-weight:700;}
+  .eng-table tr.inflect td.month-col{color:var(--lemon-lime);}
+  .eng-high{color:#27ae60;}
+  .eng-low{color:#e67e22;}
+  .eng-outlier{color:#e3120b;font-weight:700;}
+
+  /* —— INSIGHT CARDS (engagement tab) —— */
+  .insight-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:36px;}
+  @media(max-width:900px){.insight-grid{grid-template-columns:1fr;}}
+  .insight-card{background:var(--light-card);border:1px solid var(--border);border-radius:4px;padding:20px 22px;}
+  .insight-card.accent{border-left:3px solid var(--lemon-lime);}
+  .insight-card.warn{border-left:3px solid #e3120b;}
+  .insight-card.info{border-left:3px solid #2e45b8;}
+  .insight-title{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid-grey);margin-bottom:10px;}
+  .insight-body{font-size:13px;color:var(--mid-grey);line-height:1.7;}
+  .insight-body strong{color:var(--pure-white);}
+  .insight-body em{font-style:normal;color:var(--lemon-lime);}
+
+  /* —— DOM AVG TABLE —— */
+  .dom-avg-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px;}
+  @media(max-width:900px){.dom-avg-grid{grid-template-columns:repeat(3,1fr);}}
+  .dom-avg-card{background:var(--light-card);border:1px solid var(--border);border-radius:4px;padding:16px;}
+  .dom-avg-name{font-size:11px;font-weight:700;letter-spacing:.08em;margin-bottom:10px;}
+  .dom-avg-num{font-size:26px;font-weight:700;line-height:1;margin-bottom:4px;}
+  .dom-avg-label{font-size:10px;color:var(--mid-grey);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+  .dom-avg-note{font-size:11px;color:var(--mid-grey);line-height:1.5;}
+
+  /* —— LAYOUT —— */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+  /* —— CLOSE —— */
+  .close-panel{padding:48px 64px;background:var(--light-card);border-top:1px solid var(--border);}
+  .close-statement{max-width:760px;}
+  .close-statement p{font-size:17px;line-height:1.7;color:var(--mid-grey);margin-bottom:16px;}
+  .close-statement p strong{color:var(--pure-white);font-weight:600;}
+  .close-statement p em{font-style:normal;color:var(--lemon-lime);}
+  .close-logo{margin-top:36px;font-size:11px;color:#444;letter-spacing:.12em;text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-meta">IDX · AEO service line · April 2026 · Confidential</div>
+  <h1>AI traffic across the IDX portfolio<br><em>January 2024 – Q1 2026</em></h1>
+  <p class="header-sub">26 months of AI referral data across 125 corporate websites — volume, source breakdown, domain mix, acceleration rates, and engagement quality by spine domain.</p>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('overview',this)">
+    <span class="tab-num">01</span>
+    <span class="tab-label">Overview</span>
+  </button>
+  <div class="tab-divider"></div>
+  <button class="tab-btn" onclick="switchTab('accel',this)">
+    <span class="tab-num">02</span>
+    <span class="tab-label">Domain acceleration</span>
+  </button>
+  <div class="tab-divider"></div>
+  <button class="tab-btn" onclick="switchTab('engagement',this)">
+    <span class="tab-num">03</span>
+    <span class="tab-label">Engagement quality</span>
+  </button>
+  <div class="tab-divider"></div>
+  <button class="tab-btn" onclick="switchTab('spine',this)">
+    <span class="tab-num">04</span>
+    <span class="tab-label">The spine</span>
+  </button>
+</div>
+
+<!-- ============ TAB 1: OVERVIEW ============ -->
+<div id="tab-overview" class="tab-pane active">
+
+  <div class="section">
+    <div class="section-label">Volume</div>
+    <div class="section-title">Volume grew 240× in 22 months, then settled at a sustained plateau</div>
+    <p class="section-sub">The step-change arrived in October 2024 — visits rose from ~9k to ~22k in a single month. The channel peaked at 127k in October 2025 and normalised to ~70k/month through Q1 2026. Site penetration continued to expand even after visit volumes plateaued. Click a tool label to isolate its trend. Log scale used to show all four tools legibly.</p>
+
+    <div class="toggle-row" id="metricToggle">
+      <button class="toggle-btn active" onclick="setMetric('visits',this)">Total visits</button>
+      <button class="toggle-btn" onclick="setMetric('sites',this)">Sites reached</button>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-red-rule"></div>
+      <div class="chart-title" id="c1title">1.23M visits recorded across 125 managed sites, Jan 2024 – Mar 2026</div>
+      <div class="chart-subtitle" id="c1sub">Monthly AI visits · Log scale · All portfolio sites · Grouped by source tool</div>
+      <div class="chart-legend" id="gLegend">
+        <span data-t="chatgpt" onclick="toggleTool('chatgpt',this)"><span class="legend-line" style="background:#2e45b8"></span>ChatGPT</span>
+        <span data-t="perplexity" onclick="toggleTool('perplexity',this)"><span class="legend-line" style="background:#1dc9a4"></span>Perplexity</span>
+        <span data-t="gemini" onclick="toggleTool('gemini',this)"><span class="legend-line" style="background:#f97a1f"></span>Gemini</span>
+        <span data-t="claude" onclick="toggleTool('claude',this)"><span class="legend-line" style="background:#EEFF00"></span>Claude</span>
+      </div>
+      <div class="chart-canvas-wrap"><canvas id="growthChart"></canvas></div>
+      <div class="chart-source">Source: ci-c360 Google Analytics 4 · IDX portfolio · 125 sites · ChatGPT = OpenAI + OpenAI ChatGPT + OpenAI GPT</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Portfolio exposure</div>
+    <div class="section-title">AI traffic distribution across primary portfolio clients</div>
+    <p class="section-sub">Cumulative AI visits by client, Jan 2024 – Mar 2026. Bars are stacked by spine domain — the proportional mix of content sections driving the visits. Hover over a bar for the domain breakdown.</p>
+
+    <div class="chart-wrap">
+      <div class="chart-red-rule"></div>
+      <div class="chart-title">Unilever: 456k total visits — careers leads on Anglo American, IR leads on Aegon and M&G</div>
+      <div class="chart-subtitle">Cumulative AI visits by client · Stacked by spine domain · Jan 2024 – Mar 2026</div>
+      <div class="chart-legend">
+        <span><span class="legend-dot" style="background:#EEFF00"></span>CC — Corporate comms</span>
+        <span><span class="legend-dot" style="background:#2e45b8"></span>IR — Investor relations</span>
+        <span><span class="legend-dot" style="background:#1dc9a4"></span>ESG</span>
+        <span><span class="legend-dot" style="background:#f97a1f"></span>CT — Careers</span>
+        <span><span class="legend-dot" style="background:#FF006F"></span>BP — Brand &amp; product</span>
+      </div>
+      <div class="client-grid" id="clientBars"></div>
+      <div class="chart-source" style="margin-top:16px">Source: ci-c360 GA4 · Domain split estimated from s1section mapping · Profile-level aggregation</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ TAB 2: DOMAIN ACCELERATION ============ -->
+<div id="tab-accel" class="tab-pane">
+  <div class="section">
+    <div class="section-label">Domain acceleration</div>
+    <div class="section-title">Domains have diverged sharply since the October 2025 peak</div>
+    <p class="section-sub">All five spine domains tracked upward through 2024–2025. After the peak they diverged. Careers is the only domain still growing. ESG and Brand &amp; Product declined most sharply. Corporate Comms remains dominant by volume. IR has held its share better than ESG or BP.</p>
+
+    <div class="findings-grid">
+      <div class="finding-card g">
+        <div class="finding-label">Careers · still accelerating</div>
+        <div class="finding-num" style="color:var(--lemon-lime)">+17.6%</div>
+        <div class="finding-body"><strong>CT grew from 8,554 to 10,058 pageviews</strong> between October 2025 and March 2026, while total portfolio traffic fell 46%. Its share of mapped traffic rose from 9.5% to 23.3%.</div>
+      </div>
+      <div class="finding-card r">
+        <div class="finding-label">ESG · sharpest relative decline</div>
+        <div class="finding-num" style="color:#e3120b">−68%</div>
+        <div class="finding-body"><strong>ESG fell from 13,414 to 4,334 pageviews</strong> peak to March 2026. Fastest initial accelerator in H2 2024 (+2,162% HoH); now normalising the hardest.</div>
+      </div>
+      <div class="finding-card o">
+        <div class="finding-label">Brand &amp; Product · steepest absolute fall</div>
+        <div class="finding-num" style="color:#f97a1f">−69%</div>
+        <div class="finding-body"><strong>BP fell from 8,576 to 2,685 pageviews</strong> peak to March 2026. Likely a mix of seasonal consumer patterns and brand queries migrating to individual brand domains.</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-red-rule"></div>
+      <div class="chart-title">Corporate comms dominates by volume; careers is the only domain growing post-peak</div>
+      <div class="chart-subtitle">Monthly AI pageviews by spine domain · Jan 2024 – Mar 2026 · Referral join via ci-c360.ga4.processed</div>
+      <div class="chart-legend">
+        <span><span class="legend-line" style="background:#EEFF00"></span>CC</span>
+        <span><span class="legend-line" style="background:#2e45b8"></span>IR</span>
+        <span><span class="legend-line" style="background:#1dc9a4"></span>ESG</span>
+        <span><span class="legend-line" style="background:#f97a1f"></span>CT</span>
+        <span><span class="legend-line" style="background:#FF006F"></span>BP</span>
+      </div>
+      <div class="chart-canvas-wrap" style="height:320px"><canvas id="domVolChart"></canvas></div>
+      <div class="chart-source">Source: ci-c360 · processed table · AI referral sources: chatgpt.com, perplexity.ai, gemini.google.com, claude.ai · s1section spine mapping</div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-red-rule"></div>
+      <div class="chart-title">Careers share tripled post-peak while ESG and BP compressed</div>
+      <div class="chart-subtitle">Domain share of mapped AI traffic (%) · Jan 2024 – Mar 2026</div>
+      <div class="chart-legend">
+        <span><span class="legend-line" style="background:#EEFF00"></span>CC</span>
+        <span><span class="legend-line" style="background:#2e45b8"></span>IR</span>
+        <span><span class="legend-line" style="background:#1dc9a4"></span>ESG</span>
+        <span><span class="legend-line" style="background:#f97a1f"></span>CT</span>
+        <span><span class="legend-line" style="background:#FF006F"></span>BP</span>
+      </div>
+      <div class="chart-canvas-wrap" style="height:280px"><canvas id="domShareChart"></canvas></div>
+      <div class="chart-source">Share = domain pageviews ÷ total mapped pageviews · Excludes unmapped s1sections</div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-red-rule"></div>
+      <div class="chart-title">H2 2024 was the acceleration event; H2 2025 was the volume peak; Q1 2026 is the emerging baseline</div>
+      <div class="chart-subtitle">Portfolio visits and domain pageviews by period · Growth vs prior period shown below each figure</div>
+      <div style="overflow-x:auto;margin-top:16px"><table class="period-table" id="periodTable"></table></div>
+      <div class="chart-source" style="margin-top:12px">Note: Q1 2026 = 3 months vs 6 months for half-year periods. Annualised Q1 2026 run-rate — 434k portfolio visits.</div>
+    </div>
+
+    <div class="two-col" style="margin-top:24px">
+      <div class="chart-wrap">
+        <div class="chart-red-rule"></div>
+        <div class="chart-title">IR and ESG grew fastest from the 2024 base</div>
+        <div class="chart-subtitle">Annualised CAGR · Jan–Mar 2024 avg – Jan–Mar 2026 avg · 26-month span</div>
+        <div class="chart-canvas-wrap" style="height:240px"><canvas id="cagrChart"></canvas></div>
+        <div class="chart-source">3-month averages used at each end to reduce noise</div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-red-rule"></div>
+        <div class="chart-title">Careers gained 14pp of share; ESG and BP gave it back</div>
+        <div class="chart-subtitle">Domain share — Jan 2024 vs Mar 2026</div>
+        <div class="chart-canvas-wrap" style="height:240px"><canvas id="shareShiftChart"></canvas></div>
+        <div class="chart-source">Share = domain pageviews ÷ total mapped pageviews in that month</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 3: ENGAGEMENT QUALITY ============ -->
+<div id="tab-engagement" class="tab-pane">
+  <div class="section">
+    <div class="section-label">Engagement quality</div>
+    <div class="section-title">Volume tells one story. How long visitors stay tells another.</div>
+    <p class="section-sub">Average engagement time per visit has held steady at 18–22 seconds across the full period — surprisingly consistent given the 240× volume growth. But domain-level data reveals a significant divergence: IR visitors are spending just 11–16 seconds per page (scan-and-retrieve), while CC, ESG, and CT visitors spend 20–25 seconds (sustained reading). The spine's behaviour archetypes — BHV-001 through BHV-005 — map directly to these patterns.</p>
+
+    <!-- Insight cards -->
+    <div class="insight-grid">
+      <div class="insight-card accent">
+        <div class="insight-title">Engagement held stable despite 240× volume growth</div>
+        <div class="insight-body">Portfolio avg engagement per visit ranged from <strong>17.0s to 27.5s</strong> across 27 months with no structural trend. Volume scaled without degrading session quality — the channel matured, it did not commoditise.</div>
+      </div>
+      <div class="insight-card info">
+        <div class="insight-title">IR visitors are scanners; ESG and CC visitors are readers</div>
+        <div class="insight-body">IR avg <em>11–16s per page</em> (BHV-005: scan-and-retrieve — finding the document and leaving). CC and ESG avg <em>20–25s</em> (BHV-001: sustained reading — building understanding). Careers (CT) shows a divergence in Q1 2026 — see below.</div>
+      </div>
+      <div class="insight-card warn">
+        <div class="insight-title">CT engagement collapsed in Q1 2026 despite volume growth</div>
+        <div class="insight-body">CT pageviews grew 17.6% post-peak — but avg secs per page dropped from <strong>24s to 9s</strong> in Feb–Mar 2026. Growing CT volume appears to be <strong>shallower browse traffic</strong>, not deep reading. Quantity is up; quality needs watching.</div>
+      </div>
+      <div class="insight-card accent">
+        <div class="insight-title">Distinct users growing faster than visits in Q1 2026</div>
+        <div class="insight-body">25,002 distinct users in March 2026 from 69,426 visits — <strong>users as % of visits holding at ~36%</strong>. Site penetration (104 sites) still expanding while visit volumes plateau. New sites, not more visits per site.</div>
+      </div>
+    </div>
+
+    <!-- Domain avg cards -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--lemon-lime);margin-bottom:12px">Avg seconds per pageview by domain · Full period average (Jan 2024 – Mar 2026)</div>
+      <div class="dom-avg-grid" id="domAvgCards"></div>
+    </div>
+
+    <!-- Chart: avg secs per visit (portfolio) -->
+    <div class="chart-wrap">
+      <div class="chart-red-rule"></div>
+      <div class="chart-title">Portfolio engagement held at 18–22 seconds per visit throughout — a stable channel, not a declining one</div>
+      <div class="chart-subtitle">Avg engagement seconds per AI visit · Monthly · Jan 2024 – Mar 2026 · Source: traffic_sources.engagement_time ÷ visits</div>
+      <div class="chart-canvas-wrap" style="height:260px"><canvas id="engAvgChart"></canvas></div>
+      <div class="chart-source">Source: ci-c360.ga4.traffic_sources · engagement_time field · All AI bots combined</div>
+    </div>
+
+    <!-- Chart: domain avg secs per pageview -->
+    <div class="chart-wrap">
+      <div class="chart-red-rule"></div>
+      <div class="chart-title">IR consistently the lowest engagement domain; CT collapsed to 9s in Q1 2026 despite volume growth</div>
+      <div class="chart-subtitle">Avg seconds per pageview by spine domain · Monthly · Jan 2024 – Mar 2026</div>
+      <div class="chart-legend">
+        <span><span class="legend-line" style="background:#EEFF00"></span>CC</span>
+        <span><span class="legend-line" style="background:#2e45b8"></span>IR</span>
+        <span><span class="legend-line" style="background:#1dc9a4"></span>ESG</span>
+        <span><span class="legend-line" style="background:#f97a1f"></span>CT</span>
+        <span><span class="legend-line" style="background:#FF006F"></span>BP</span>
+      </div>
+      <div class="chart-canvas-wrap" style="height:300px"><canvas id="domEngChart"></canvas></div>
+      <div class="chart-source">Source: ci-c360.ga4.processed · userEngagementDuration ÷ screenPageViews · AI referral sources only</div>
+    </div>
+
+    <!-- Two-col: users vs visits + engagement hours -->
+    <div class="two-col" style="margin-top:24px">
+      <div class="chart-wrap">
+        <div class="chart-red-rule"></div>
+        <div class="chart-title">Visits, users, and total engagement hours — the portfolio in three metrics</div>
+        <div class="chart-subtitle">Monthly totals · Jan 2024 – Mar 2026 · Right axis = engagement hours</div>
+        <div class="chart-canvas-wrap" style="height:260px"><canvas id="usersChart"></canvas></div>
+        <div class="chart-source">Source: ci-c360.ga4.traffic_sources · visits, users, engagement_time</div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-red-rule"></div>
+        <div class="chart-title">Total engagement hours — what the portfolio generates in AI reading time each month</div>
+        <div class="chart-subtitle">Total engagement minutes converted to hours · Monthly · Jan 2024 – Mar 2026</div>
+        <div class="chart-canvas-wrap" style="height:260px"><canvas id="engHrsChart"></canvas></div>
+        <div class="chart-source">Source: ci-c360.ga4.traffic_sources · total_engagement_time ÷ 60</div>
+      </div>
+    </div>
+
+    <!-- Detailed monthly table -->
+    <div class="chart-wrap" style="margin-top:24px">
+      <div class="chart-red-rule"></div>
+      <div class="chart-title">Monthly engagement detail — portfolio level</div>
+      <div class="chart-subtitle">Visits · Users · Users as % of visits · Total engagement hours · Avg seconds per visit · Jan 2024 – Mar 2026</div>
+      <div style="overflow-x:auto;margin-top:16px">
+        <table class="eng-table" id="engTable"></table>
+      </div>
+      <div class="chart-source" style="margin-top:10px">Avg secs colour guide: <span class="eng-high">≥22s (high engagement)</span> · <span class="eng-low">&lt;18s (below average)</span> · Oct 2024 inflection highlighted</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ TAB 4: THE SPINE ============ -->
+<div id="tab-spine" class="tab-pane">
+  <div class="section">
+    <div class="section-label">The semantic spine</div>
+    <div class="section-title">105 canonical nodes mapped to the five domains driving this traffic</div>
+    <p class="section-sub">A governed controlled vocabulary covering the content types that generate AI referral traffic across the portfolio. Every node carries an AEO priority rating grounded in traffic evidence — and now a behaviour archetype grounded in engagement data. Select a domain to see its node inventory.</p>
+
+    <div class="domain-grid" id="domainGrid"></div>
+    <div class="domain-detail" id="domainDetail"></div>
+
+    <div class="chart-wrap">
+      <div class="chart-red-rule"></div>
+      <div class="chart-title">44 of 105 nodes rated Critical or High priority</div>
+      <div class="chart-subtitle">AEO priority distribution across 105 canonical nodes · By domain</div>
+      <div class="chart-legend">
+        <span><span class="legend-dot" style="background:#e3120b"></span>Critical</span>
+        <span><span class="legend-dot" style="background:#f97a1f"></span>High</span>
+        <span><span class="legend-dot" style="background:#2a1040;border:1px solid #555"></span>Standard</span>
+      </div>
+      <div class="chart-canvas-wrap" style="height:240px"><canvas id="priorityChart"></canvas></div>
+      <div class="chart-source">Source: IDX semantic spine v1.0 · 105 nodes · Schema Owner: Simon Heath</div>
+    </div>
+  </div>
+
+  <div class="close-panel">
+    <div class="close-statement">
+      <p><strong>The spine names what the traffic data shows.</strong> Two years of AI referral data across 125 sites points to the same five content domains. The engagement data adds a second dimension: not just which domains are queried, but how. IR is queried by scanners retrieving documents. ESG and CC are read by analysts building understanding. Careers is browsed by candidates making employer decisions. The spine governs all of it — and the behaviour archetypes embedded in every node reflect exactly these patterns.</p>
+      <p><em>Every node carries the evidence that justifies its priority rating.</em> Audiences, sectors, engagement behaviours, and temporal cycles — all derived from the portfolio data IDX already holds. The AEO service line is the delivery mechanism. The spine is the intelligence layer that tells it what to prioritise, and why.</p>
+      <p><strong>That kind of cross-portfolio intelligence takes a decade to build.</strong> Not a funding round.</p>
+    </div>
+    <div class="close-logo">IDX · Semantic Spine · v1.0 · April 2026</div>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════════════
+// SHARED DATA
+// ═══════════════════════════════════════════════════
+const MONTHS=['Jan 24','Feb 24','Mar 24','Apr 24','May 24','Jun 24','Jul 24','Aug 24','Sep 24','Oct 24','Nov 24','Dec 24','Jan 25','Feb 25','Mar 25','Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26'];
+
+const DV={
+  chatgpt:   [311,937,1108,988,303,107,55,2660,6765,18164,32148,27717,33883,46183,53644,60030,69108,57149,57993,58159,86986,118331,114625,68713,65378,60079,55304],
+  perplexity:[203,649,744,622,840,1623,1869,1465,1060,1705,3494,2958,2590,3511,4262,5371,6702,4916,4719,3847,3378,4677,4777,3520,2586,2440,2911],
+  gemini:    [1,17,16,10,56,38,680,858,1056,1576,2316,1955,1782,2330,3029,3403,3248,3261,3770,2596,3114,3986,4427,5070,7985,7347,8265],
+  claude:    [10,14,27,44,53,10,10,14,21,70,171,87,53,57,207,247,432,469,468,568,785,829,863,680,845,1050,2870],
+};
+const DS={
+  chatgpt:   [21,40,42,43,12,14,12,52,61,77,78,76,88,94,91,88,90,90,87,89,92,94,100,103,103,97,94],
+  perplexity:[16,41,41,34,45,48,52,48,54,45,52,43,55,72,65,68,70,65,67,45,43,40,42,44,44,40,61],
+  gemini:    [1,3,4,4,7,5,41,47,50,53,55,48,54,62,65,71,60,61,63,57,60,61,68,82,84,77,76],
+  claude:    [3,8,5,12,11,5,6,7,5,10,11,8,9,10,27,21,27,32,36,36,35,39,38,43,52,44,60],
+};
+const DD={
+  CC: [104,336,450,493,683,535,812,1225,1874,6574,12081,10772,10719,15464,19822,22976,26272,20785,19844,21122,31839,44797,43818,26331,24149,20171,18886],
+  IR: [30,77,166,102,107,121,203,491,716,1970,4199,3051,3616,4948,6175,7104,9082,7692,7361,6377,9617,14735,15313,10234,8754,9363,7174],
+  ESG:[18,29,126,102,103,66,123,127,252,1992,3980,3569,3416,4602,6720,7626,10173,8030,7281,6860,9562,13414,13320,8444,6722,4615,4334],
+  CT: [70,106,142,99,68,86,151,206,705,996,1225,1474,1912,2551,2261,2828,4610,4791,5156,5245,7782,8554,8124,4414,6939,9366,10058],
+  BP: [31,143,250,97,96,222,192,386,658,1514,2746,2236,2690,4127,4471,4628,5668,5737,4906,4715,6940,8576,8949,4896,4381,2970,2685],
+};
+const DC={CC:'#EEFF00',IR:'#2e45b8',ESG:'#1dc9a4',CT:'#f97a1f',BP:'#FF006F'};
+const TC={chatgpt:'#2e45b8',perplexity:'#1dc9a4',gemini:'#f97a1f',claude:'#EEFF00'};
+const DOMS=['CC','IR','ESG','CT','BP'];
+
+// Portfolio engagement (from traffic_sources)
+const PE={
+  visits:[532,1651,1930,1701,1300,1806,2649,5023,8903,21577,38205,32817,38330,52127,61183,69112,79520,65811,66964,65172,94339,127870,124720,77995,76798,70937,69426],
+  users: [67,341,395,435,301,603,771,1507,2290,4401,11247,9099,12045,15651,17298,19530,22722,19344,19882,19342,29092,38064,37735,24077,25160,24522,25002],
+  engMins:[243,550,765,620,368,598,878,1591,3245,6982,13011,10777,12983,18357,20933,22316,24217,20706,22144,21372,34339,42996,40084,29858,22666,20714,20629],
+  avgSecs:[27.5,20.0,23.8,21.9,17.0,19.9,19.9,19.0,21.9,19.4,20.4,19.7,20.3,21.1,20.5,19.4,18.3,18.9,19.8,19.7,21.8,20.2,19.3,23.0,17.7,17.5,17.8],
+};
+
+// Domain engagement avg secs per pageview (from processed)
+const DE={
+  CC: [39.7,31.3,26.0,23.2,18.0,19.5,21.9,24.2,25.0,21.0,22.3,21.9,23.6,24.4,23.0,21.2,19.5,20.4,23.4,21.0,22.6,22.0,20.9,18.9,20.6,21.5,21.3],
+  IR: [28.9,17.7,19.0,30.2,18.5,15.7,18.7,21.0,17.4,13.6,14.6,13.9,12.4,15.8,14.0,15.1,13.4,11.9,14.2,14.8,13.0,11.8,12.0,42.6,13.4,12.0,12.8],
+  ESG:[14.7,31.8,19.5,31.9,22.6,24.3,12.6,19.8,28.6,21.9,31.4,22.8,21.5,20.8,23.1,19.9,18.5,19.2,18.2,19.6,19.5,18.5,18.6,22.4,16.9,18.8,14.5],
+  CT: [13.3,21.9,20.6,17.8,16.7,30.5,10.7,18.0,19.8,21.9,20.5,18.4,21.7,23.6,23.8,24.0,21.6,21.9,22.3,21.4,23.9,24.9,23.6,33.4,12.8,9.3,9.0],
+  BP: [36.7,34.6,29.4,22.2,26.7,29.2,22.2,22.5,27.3,19.7,20.2,20.9,18.8,20.6,19.7,18.7,19.0,16.7,17.5,18.4,17.1,18.6,17.6,17.7,15.8,16.7,14.3],
+};
+
+const CLIENTS=[
+  {name:'Unilever',       t:456000,m:{CC:.38,IR:.12,ESG:.20,CT:.17,BP:.13}},
+  {name:'Anglo American', t:198000,m:{CC:.22,IR:.14,ESG:.13,CT:.44,BP:.07}},
+  {name:'Diageo',         t:87000, m:{CC:.25,IR:.35,ESG:.10,CT:.16,BP:.14}},
+  {name:'Rolls-Royce',    t:52000, m:{CC:.18,IR:.28,ESG:.09,CT:.08,BP:.37}},
+  {name:'Vodafone',       t:38000, m:{CC:.40,IR:.22,ESG:.12,CT:.18,BP:.08}},
+  {name:'Richemont',      t:29000, m:{CC:.15,IR:.30,ESG:.30,CT:.10,BP:.15}},
+  {name:'Aegon',          t:21000, m:{CC:.12,IR:.58,ESG:.18,CT:.08,BP:.04}},
+  {name:'Philips',        t:18000, m:{CC:.20,IR:.25,ESG:.28,CT:.12,BP:.15}},
+  {name:'Pearson',        t:14000, m:{CC:.30,IR:.20,ESG:.10,CT:.30,BP:.10}},
+  {name:'M&G',            t:11000, m:{CC:.10,IR:.62,ESG:.18,CT:.06,BP:.04}},
+];
+
+const SD=[
+  {id:'ESG',label:'ESG',nodes:27,color:'#1dc9a4',critical:6,high:12,standard:9,
+   behaviour:'BHV-001 Sustained reader · BHV-005 Scan-and-retrieve',
+   headline:'E2.1 Nature & biodiversity — 130k AI views, Critical priority · Avg 19–25s per page',
+   summary:'Covers the full corporate sustainability estate — from emissions data to framework alignment. Highest-traffic domain on Unilever; primary content type queried by ESG rating agencies and institutional investors. Engagement at 19–25s per page reflects sustained reading — visitors arriving to build understanding, not retrieve a single fact.',
+   nl:[['E1.1','Climate strategy and targets'],['E1.2','GHG emissions'],['E1.3','Climate transition and resilience'],['E1.4','Energy use and efficiency'],['E1.5','Renewable energy'],['E1.6','Carbon markets and offsets'],['E2.1','Nature and biodiversity'],['E2.2','Water stewardship'],['E2.3','Waste and circular economy'],['E2.4','Plastics and packaging'],['E2.5','Pollution and hazardous materials'],['E3.1','Workforce health, safety and wellbeing'],['E3.2','Diversity, equity and inclusion'],['E3.3','Human rights and labour standards'],['E3.4','Community and social impact'],['E3.5','Livelihoods'],['E3.6','Consumer and stakeholder engagement'],['E3.7','Responsible products and services'],['E4.1','ESG governance and oversight'],['E4.2','Business ethics and anti-corruption'],['E4.3','Tax transparency'],['E4.4','Supply chain and suppliers'],['E4.5','Policy and regulatory engagement'],['E5.1','ESG reporting and disclosure'],['E5.2','Framework alignment'],['E5.3','ESG targets and progress'],['E5.4','ESG ratings and indices']]},
+  {id:'IR',label:'Investor relations',nodes:25,color:'#2e45b8',critical:4,high:13,standard:8,
+   behaviour:'BHV-005 Scan-and-retrieve (dominant) · BHV-002 Event-focused reader',
+   headline:'I1.1 Results & financial performance — queried by 159 named institutional AI deployments · Avg 12–17s per page',
+   summary:'Governs financial performance, governance, and investment case content. Most machine-queried domain for listed companies. Engagement at 11–17s per page confirms BHV-005 (scan-and-retrieve) as the dominant pattern — investors locating a specific document or data point and leaving. The lowest dwell time of any domain, and structurally correct for the use case.',
+   nl:[['I1.1','Results and financial performance'],['I1.2','Annual report and accounts'],['I1.3','Results presentations and webcasts'],['I1.4','Regulatory announcements and filings'],['I1.5','Financial outlook and guidance'],['I2.1','Capital allocation'],['I2.2','Dividends and buybacks'],['I2.3','Debt and fixed income'],['I2.4','M&A and corporate transactions'],['I3.1','Corporate strategy'],['I3.2','Business model and value creation'],['I3.3','Markets and competitive position'],['I3.4','Investment case'],['I4.1','Board composition and effectiveness'],['I4.2','Executive remuneration'],['I4.3','Shareholder rights and AGM'],['I4.4','Risk management and principal risks'],['I4.5','Regulatory and legal matters'],['I4.6','Corporate governance framework'],['I5.1','Capital markets day and investor events'],['I5.2','Shareholder centre'],['I5.3','Analyst consensus and estimates'],['I5.4','ESG for investors'],['I5.5','Investor contacts and financial calendar'],['I5.6','Debt investor centre']]},
+  {id:'CC',label:'Corp. comms',nodes:20,color:'#EEFF00',critical:5,high:8,standard:7,
+   behaviour:'BHV-004 Narrative browser · BHV-001 Sustained reader · BHV-002 Event-focused reader',
+   headline:'C1.1 Press releases — Unilever /news at 131k AI views, largest single section in portfolio · Avg 20–25s per page',
+   summary:'Highest-volume domain on most consumer-facing sites. News, press releases, and leadership content drive the majority of portfolio AI traffic. Engagement at 20–25s per page reflects a mix of narrative browsing (following editorial threads) and sustained reading. Press release content in particular shows BHV-002 characteristics during major announcements.',
+   nl:[['C1.1','Press releases and announcements'],['C1.2','News articles and editorial'],['C1.3','Media contacts and enquiries'],['C1.4','Multimedia library'],['C2.1','Purpose and values'],['C2.2','Company history and heritage'],['C2.3','Leadership and executive team'],['C2.4','Corporate story and about us'],['C3.1','Crisis and issues communication'],['C3.2','Corporate positions and statements'],['C3.3','Regulatory and policy communication'],['C3.4','Stakeholder correspondence'],['C4.1','Corporate campaigns and initiatives'],['C4.2','Thought leadership and opinion'],['C4.3','Awards and recognition'],['C4.4','Corporate partnerships and sponsorship'],['C5.1','Social media presence'],['C5.2','Corporate website and digital estate'],['C5.3','Content strategy and editorial standards'],['C6.1','Supplier engagement and procurement']]},
+  {id:'CT',label:'Careers & talent',nodes:18,color:'#f97a1f',critical:3,high:9,standard:6,
+   behaviour:'BHV-001 Sustained reader (pre-2026) · BHV-004 Narrative browser (emerging)',
+   headline:'T1.1 Job listings — Anglo American careers at 21.6k AI views · Avg 22s (2024–25) falling to 9s (Q1 2026)',
+   summary:'Highest AI-traffic domain on multiple portfolio sites and the only domain still growing post-peak. Critical change in Q1 2026: avg engagement dropped from 22–25s to 9s despite rising pageviews. The behaviour pattern is shifting from sustained employer research (BHV-001) to shallow browse traffic (BHV-004/005) — volume growth is outpacing engagement quality.',
+   nl:[['T1.1','Job listings and search'],['T1.2','Application process and guidance'],['T1.3','Graduate and early careers'],['T1.4','Experienced hire and specialist recruitment'],['T2.1','Why work here'],['T2.2','Rewards and benefits'],['T2.3','Flexible and hybrid working'],['T2.4','Learning and development'],['T3.1','Culture and ways of working'],['T3.2','Diversity, equity and inclusion in talent'],['T3.3','Wellbeing and mental health'],['T3.4','Employee communities and networks'],['T4.1','Mission and purpose at work'],['T4.2','Social and environmental impact through work'],['T4.3','Innovation and technology careers'],['T5.1','Life at the organisation'],['T5.2','Locations and global opportunities'],['T5.3','Awards and employer recognition']]},
+  {id:'BP',label:'Brand & product',nodes:15,color:'#FF006F',critical:4,high:6,standard:5,
+   behaviour:'BHV-004 Narrative browser · BHV-005 Scan-and-retrieve (B2B)',
+   headline:'B1.1 Brand portfolio — Unilever /brands at 23.7k AI views · Avg 17–25s per page (declining in 2026)',
+   summary:'Governs product catalogues, brand identity, sustainability credentials, and commercial channel information. Steepest post-peak decline — down 69% from October 2025 to March 2026. Engagement has also declined (from ~25s to ~14s) alongside the volume drop — consistent with brand query traffic migrating to individual brand domains rather than corporate parent sites.',
+   nl:[['B1.1','Brand portfolio overview'],['B1.2','Individual brand pages'],['B1.3','Brand heritage and history'],['B2.1','Product and service catalogue'],['B2.2','Product innovation and pipeline'],['B2.3','Product sustainability and responsibility'],['B3.1','Markets and geographies'],['B3.2','Customer and partner channels'],['B3.3','Brand positioning and differentiation'],['B4.1','Brand guidelines and identity'],['B4.2','Intellectual property and licensing'],['B4.3','Product certifications and standards'],['B5.1','Consumer brand content'],['B5.2','B2B and industrial product content'],['B6.1','Operations and business units']]},
+];
+
+// ═══════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════
+const built={accel:false,engagement:false,spine:false};
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(!built[id]){
+    if(id==='accel')buildAccel();
+    if(id==='engagement')buildEngagement();
+    if(id==='spine')buildSpine();
+    built[id]=true;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// TAB 1 — OVERVIEW
+// ═══════════════════════════════════════════════════
+let metric='visits',gChart,isolated=null;
+
+function buildGrowth(){
+  const ctx=document.getElementById('growthChart').getContext('2d');
+  const d=metric==='visits'?DV:DS;
+  if(gChart)gChart.destroy();
+  const iPlugin={id:'iL',afterDraw(ch){
+    const m=ch.getDatasetMeta(0);if(!m.data[9])return;
+    const x=m.data[9].x,ca=ch.chartArea,c=ch.ctx;
+    c.save();c.strokeStyle='#444';c.lineWidth=1;c.setLineDash([4,3]);
+    c.beginPath();c.moveTo(x,ca.top);c.lineTo(x,ca.bottom);c.stroke();
+    c.setLineDash([]);c.fillStyle='#666';c.font='10px Arial';
+    c.fillText('Oct 2024',x+4,ca.top+14);c.restore();
+  }};
+  gChart=new Chart(ctx,{
+    type:'line',plugins:[iPlugin],
+    data:{labels:MONTHS,datasets:['chatgpt','perplexity','gemini','claude'].map(t=>({
+      label:{chatgpt:'ChatGPT',perplexity:'Perplexity',gemini:'Gemini',claude:'Claude'}[t],
+      data:d[t],borderColor:TC[t],backgroundColor:'transparent',
+      borderWidth:isolated===null?(t==='chatgpt'?2.5:2):(isolated===t?2.5:0.5),
+      borderDash:isolated&&isolated!==t?[3,3]:[],pointRadius:0,tension:.3,
+    }))},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e0f2a',titleColor:'#fff',bodyColor:'#aaa',borderColor:'#2a1040',borderWidth:1,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#666',font:{size:10},maxTicksLimit:14,maxRotation:0},border:{display:false}},
+        y:{type:'logarithmic',grid:{color:'#1e1030',lineWidth:.5},ticks:{color:'#666',font:{size:10},callback:v=>{const t=[1,10,100,1000,10000,100000];return t.includes(v)?(v>=1000?(v/1000).toFixed(0)+'k':String(v)):''}},border:{display:false}}
+      }
+    }
+  });
+}
+function toggleTool(t,el){
+  isolated=isolated===t?null:t;
+  document.querySelectorAll('#gLegend span').forEach(s=>s.classList.toggle('dimmed',isolated!==null&&s.dataset.t!==isolated));
+  buildGrowth();
+}
+function setMetric(m,btn){
+  metric=m;
+  document.querySelectorAll('#metricToggle .toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  const iv=m==='visits';
+  document.getElementById('c1title').textContent=iv?'1.23M visits recorded across 125 managed sites, Jan 2024 – Mar 2026':'Site penetration reached 104 of 125 managed sites by end of 2025';
+  document.getElementById('c1sub').textContent=iv?'Monthly AI visits · Log scale · All portfolio sites · Grouped by source tool':'Distinct sites receiving AI referral traffic per month · Grouped by source tool';
+  buildGrowth();
+}
+function buildClientBars(){
+  const max=CLIENTS[0].t,cont=document.getElementById('clientBars');
+  CLIENTS.forEach(c=>{
+    const lbl=c.t>=1000?(c.t/1000).toFixed(0)+'k':c.t;
+    const segs=DOMS.map(d=>{const w=(c.m[d]*c.t/max*100).toFixed(2);return`<div class="client-seg" style="width:${w}%;background:${DC[d]};opacity:.85"></div>`;}).join('');
+    const tip=DOMS.map(d=>{const v=Math.round(c.m[d]*c.t);return`${d}: ${v>=1000?(v/1000).toFixed(0)+'k':v}`;}).join(' · ');
+    cont.innerHTML+=`<div class="client-row"><div class="client-name">${c.name}</div><div class="client-bar-wrap">${segs}<div class="c-tip">${tip}</div></div><div class="client-val">${lbl}</div></div>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// TAB 2 — DOMAIN ACCELERATION
+// ═══════════════════════════════════════════════════
+function buildAccel(){
+  const base={responsive:true,maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e0f2a',titleColor:'#fff',bodyColor:'#aaa',borderColor:'#2a1040',borderWidth:1}},
+    scales:{
+      x:{grid:{display:false},ticks:{color:'#666',font:{size:10},maxTicksLimit:14,maxRotation:0},border:{display:false}},
+      y:{grid:{color:'#1e1030',lineWidth:.5},ticks:{color:'#666',font:{size:10}},border:{display:false}}
+    }
+  };
+  new Chart(document.getElementById('domVolChart').getContext('2d'),{
+    type:'line',
+    data:{labels:MONTHS,datasets:DOMS.map(d=>({label:d,data:DD[d],borderColor:DC[d],backgroundColor:'transparent',borderWidth:d==='CC'?2.5:2,pointRadius:0,tension:.3}))},
+    options:{...base,plugins:{...base.plugins,tooltip:{...base.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`}}},
+      scales:{x:base.scales.x,y:{...base.scales.y,ticks:{color:'#666',font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}}}
+  });
+  const shares={};DOMS.forEach(d=>shares[d]=[]);
+  MONTHS.forEach((_,i)=>{const tot=DOMS.reduce((s,d)=>s+DD[d][i],0);DOMS.forEach(d=>shares[d].push(tot>0?+(DD[d][i]/tot*100).toFixed(1):0));});
+  new Chart(document.getElementById('domShareChart').getContext('2d'),{
+    type:'line',
+    data:{labels:MONTHS,datasets:DOMS.map(d=>({label:d,data:shares[d],borderColor:DC[d],backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:.3}))},
+    options:{...base,plugins:{...base.plugins,tooltip:{...base.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`}}},
+      scales:{x:base.scales.x,y:{...base.scales.y,ticks:{color:'#666',font:{size:10},callback:v=>v+'%'},min:0,max:60}}}
+  });
+  const periods=[
+    {l:'H1 2024',p:8913,h:null,  CC:2601, IR:603,  ESG:444,  CT:571,  BP:839,  CCh:null,IRh:null,ESGh:null,CTh:null,BPh:null},
+    {l:'H2 2024',p:109204,h:+1125,CC:33338,IR:10630,ESG:10043,CT:4757, BP:7732, CCh:+1182,IRh:+1663,ESGh:+2162,CTh:+733,BPh:+822},
+    {l:'H1 2025',p:366145,h:+235, CC:116038,IR:38617,ESG:40567,CT:18953,BP:27321,CCh:+248,IRh:+263,ESGh:+304,CTh:+298,BPh:+253},
+    {l:'H2 2025',p:557096,h:+52,  CC:187751,IR:63637,ESG:58881,CT:39275,BP:38982,CCh:+62,IRh:+65,ESGh:+45,CTh:+107,BPh:+43},
+    {l:'Q1 2026',p:217161,h:null, CC:63206, IR:25291,ESG:15671,CT:26363,BP:10036,CCh:null,IRh:null,ESGh:null,CTh:null,BPh:null},
+  ];
+  const heads=DOMS.map(d=>`<th style="color:${DC[d]}">${d}</th>`).join('');
+  const tbl=document.getElementById('periodTable');
+  tbl.innerHTML=`<thead><tr><th>Period</th><th>Portfolio</th><th>vs prior</th>${heads}<th style="color:#f97a1f">CT%</th><th style="color:#1dc9a4">ESG%</th></tr></thead><tbody>`;
+  periods.forEach(r=>{
+    const hoh=r.h===null?`<td class="neut">—</td>`:`<td class="${r.h>0?'pos':'neg'}">${r.h>0?'+':''}${r.h}%</td>`;
+    const mapped=DOMS.reduce((s,d)=>s+r[d],0);
+    const dc=DOMS.map(d=>{const v=r[d]>=1000?(r[d]/1000).toFixed(0)+'k':r[d];const k=d+'h';const ch=r[k]===null?'':`<br><span class="${r[k]>0?'pos':'neg'}" style="font-size:10px">${r[k]>0?'+':''}${r[k]}%</span>`;return`<td>${v}${ch}</td>`;}).join('');
+    const cts=mapped>0?+(r.CT/mapped*100).toFixed(0):0;
+    const esgs=mapped>0?+(r.ESG/mapped*100).toFixed(0):0;
+    tbl.innerHTML+=`<tr><td style="font-weight:700;color:#fff">${r.l}</td><td>${r.p.toLocaleString()}</td>${hoh}${dc}<td>${cts}%</td><td>${esgs}%</td></tr>`;
+  });
+  tbl.innerHTML+='</tbody>';
+  new Chart(document.getElementById('cagrChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:DOMS,datasets:[{data:[615,709,700,668,331],backgroundColor:DOMS.map(d=>DC[d]),borderWidth:0,borderRadius:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e0f2a',titleColor:'#fff',bodyColor:'#aaa',borderColor:'#2a1040',borderWidth:1,callbacks:{label:c=>` ${c.parsed.y}% annualised`}}},
+      scales:{x:{grid:{display:false},ticks:{color:'#888',font:{size:11}},border:{display:false}},y:{grid:{color:'#1e1030',lineWidth:.5},ticks:{color:'#666',font:{size:10},callback:v=>v+'%'},border:{display:false},beginAtZero:true}}}
+  });
+  const t24=DOMS.reduce((s,d)=>s+DD[d][0],0);
+  const t26=DOMS.reduce((s,d)=>s+DD[d][26],0);
+  new Chart(document.getElementById('shareShiftChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:DOMS,datasets:[
+      {label:'Jan 2024',data:DOMS.map(d=>+(DD[d][0]/t24*100).toFixed(1)),backgroundColor:'#2a1040',borderWidth:0,borderRadius:2},
+      {label:'Mar 2026',data:DOMS.map(d=>+(DD[d][26]/t26*100).toFixed(1)),backgroundColor:DOMS.map(d=>DC[d]),borderWidth:0,borderRadius:2},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,labels:{color:'#888',font:{size:10},boxWidth:10,boxHeight:10}},tooltip:{backgroundColor:'#1e0f2a',titleColor:'#fff',bodyColor:'#aaa',borderColor:'#2a1040',borderWidth:1,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`}}},
+      scales:{x:{grid:{display:false},ticks:{color:'#888',font:{size:11}},border:{display:false}},y:{grid:{color:'#1e1030',lineWidth:.5},ticks:{color:'#666',font:{size:10},callback:v=>v+'%'},border:{display:false},beginAtZero:true,max:60}}}
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// TAB 3 — ENGAGEMENT QUALITY
+// ═══════════════════════════════════════════════════
+function buildEngagement(){
+  // Domain avg cards
+  const domAvgData={
+    CC:{avg:21.8,note:'Narrative browsing + sustained reading. BHV-004/001.',trend:'stable'},
+    IR:{avg:14.2,note:'Scan-and-retrieve dominant. BHV-005. Low dwell is structurally correct.',trend:'stable'},
+    ESG:{avg:20.8,note:'Sustained reading. BHV-001. Analysts building understanding.',trend:'stable'},
+    CT:{avg:20.5,note:'Was 22–25s; dropped to 9s in Q1 2026. Watch for quality shift.',trend:'declining'},
+    BP:{avg:20.1,note:'Narrative browsing. BHV-004. Declining alongside volume post-peak.',trend:'declining'},
+  };
+  const grid=document.getElementById('domAvgCards');
+  DOMS.forEach(d=>{
+    const info=domAvgData[d];
+    grid.innerHTML+=`
+      <div class="dom-avg-card" style="border-color:${DC[d]}22">
+        <div class="dom-avg-name" style="color:${DC[d]}">${d}</div>
+        <div class="dom-avg-num" style="color:${d==='IR'?'#f97a1f':d==='CT'?'#f97a1f':DC[d]}">${info.avg}s</div>
+        <div class="dom-avg-label">avg per pageview</div>
+        <div class="dom-avg-note">${info.note}</div>
+      </div>`;
+  });
+
+  const chartBase={responsive:true,maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e0f2a',titleColor:'#fff',bodyColor:'#aaa',borderColor:'#2a1040',borderWidth:1}},
+    scales:{
+      x:{grid:{display:false},ticks:{color:'#666',font:{size:10},maxTicksLimit:14,maxRotation:0},border:{display:false}},
+      y:{grid:{color:'#1e1030',lineWidth:.5},ticks:{color:'#666',font:{size:10}},border:{display:false}}
+    }
+  };
+
+  // Portfolio avg engagement per visit
+  new Chart(document.getElementById('engAvgChart').getContext('2d'),{
+    type:'line',
+    data:{labels:MONTHS,datasets:[{
+      label:'Avg secs/visit',data:PE.avgSecs,
+      borderColor:'#EEFF00',backgroundColor:'rgba(238,255,0,.06)',
+      fill:true,borderWidth:2,pointRadius:3,pointBackgroundColor:PE.avgSecs.map(v=>v>=22?'#27ae60':v<18?'#e67e22':'#EEFF00'),
+      tension:.3,
+    }]},
+    options:{...chartBase,
+      plugins:{...chartBase.plugins,tooltip:{...chartBase.plugins.tooltip,callbacks:{label:c=>` ${c.parsed.y.toFixed(1)}s avg engagement`}}},
+      scales:{x:chartBase.scales.x,y:{...chartBase.scales.y,
+        ticks:{color:'#666',font:{size:10},callback:v=>v+'s'},min:14,max:30,
+      }}}
+  });
+
+  // Domain avg secs per pageview
+  new Chart(document.getElementById('domEngChart').getContext('2d'),{
+    type:'line',
+    data:{labels:MONTHS,datasets:DOMS.map(d=>({
+      label:d,data:DE[d],borderColor:DC[d],backgroundColor:'transparent',
+      borderWidth:2,pointRadius:0,tension:.3,
+    }))},
+    options:{...chartBase,
+      plugins:{...chartBase.plugins,tooltip:{...chartBase.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}s`}}},
+      scales:{x:chartBase.scales.x,y:{...chartBase.scales.y,
+        ticks:{color:'#666',font:{size:10},callback:v=>v+'s'},min:5,max:50,
+      }}}
+  });
+
+  // Visits + users dual
+  new Chart(document.getElementById('usersChart').getContext('2d'),{
+    type:'line',
+    data:{labels:MONTHS,datasets:[
+      {label:'Visits',data:PE.visits,borderColor:'#2e45b8',backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:.3,yAxisID:'y'},
+      {label:'Users',data:PE.users,borderColor:'#1dc9a4',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:.3,yAxisID:'y'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:true,labels:{color:'#888',font:{size:10},boxWidth:18,boxHeight:3}},
+        tooltip:{backgroundColor:'#1e0f2a',titleColor:'#fff',bodyColor:'#aaa',borderColor:'#2a1040',borderWidth:1,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#666',font:{size:10},maxTicksLimit:14,maxRotation:0},border:{display:false}},
+        y:{grid:{color:'#1e1030',lineWidth:.5},ticks:{color:'#666',font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v},border:{display:false}},
+      }
+    }
+  });
+
+  // Engagement hours bar
+  new Chart(document.getElementById('engHrsChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:MONTHS,datasets:[{
+      label:'Engagement hrs',
+      data:PE.engMins.map(m=>+(m/60).toFixed(1)),
+      backgroundColor:PE.engMins.map((_,i)=>i===9?'#EEFF00':'#2e45b8'),
+      borderWidth:0,borderRadius:2,
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e0f2a',titleColor:'#fff',bodyColor:'#aaa',borderColor:'#2a1040',borderWidth:1,callbacks:{label:c=>` ${c.parsed.y.toFixed(1)} hours`}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#666',font:{size:10},maxTicksLimit:14,maxRotation:0},border:{display:false}},
+        y:{grid:{color:'#1e1030',lineWidth:.5},ticks:{color:'#666',font:{size:10},callback:v=>v+'h'},border:{display:false},beginAtZero:true}
+      }
+    }
+  });
+
+  // Monthly engagement table
+  const tbl=document.getElementById('engTable');
+  tbl.innerHTML=`<thead><tr>
+    <th class="left">Month</th>
+    <th>Visits</th><th>Distinct users</th><th>Users % of visits</th>
+    <th>Engagement hours</th><th>Avg secs / visit</th>
+  </tr></thead><tbody>`;
+  MONTHS.forEach((m,i)=>{
+    const v=PE.visits[i],u=PE.users[i],e=PE.engMins[i],a=PE.avgSecs[i];
+    const upct=+(u/v*100).toFixed(1);
+    const hrs=+(e/60).toFixed(1);
+    const aClass=a>=22?'eng-high':a<18?'eng-low':'';
+    const isInfl=m==='Oct 24';
+    tbl.innerHTML+=`<tr${isInfl?' class="inflect"':''}>
+      <td class="left month-col">${m}</td>
+      <td>${v.toLocaleString()}</td>
+      <td>${u.toLocaleString()}</td>
+      <td>${upct}%</td>
+      <td>${hrs}h</td>
+      <td class="${aClass}">${a}s</td>
+    </tr>`;
+  });
+  tbl.innerHTML+='</tbody>';
+}
+
+// ═══════════════════════════════════════════════════
+// TAB 4 — THE SPINE
+// ═══════════════════════════════════════════════════
+let aDetail=null;
+function buildSpine(){
+  const grid=document.getElementById('domainGrid');
+  SD.forEach(d=>{
+    const c=document.createElement('div');c.className='domain-card';c.id='card-'+d.id;
+    c.innerHTML=`<div class="domain-name">${d.label.toUpperCase()}</div><div class="domain-count" style="color:${d.color}">${d.nodes}</div><div class="domain-count-label">canonical nodes</div><div class="priority-pills"><div class="pill"><span class="pill-dot dot-critical"></span>${d.critical} Critical</div><div class="pill"><span class="pill-dot dot-high"></span>${d.high} High</div><div class="pill"><span class="pill-dot dot-standard"></span>${d.standard} Standard</div></div>`;
+    c.onclick=()=>tDetail(d.id);grid.appendChild(c);
+  });
+  new Chart(document.getElementById('priorityChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:SD.map(d=>d.id),datasets:[
+      {label:'Critical',data:SD.map(d=>d.critical),backgroundColor:'#e3120b',borderWidth:0,stack:'a'},
+      {label:'High',data:SD.map(d=>d.high),backgroundColor:'#f97a1f',borderWidth:0,stack:'a'},
+      {label:'Standard',data:SD.map(d=>d.standard),backgroundColor:'#2a1040',borderWidth:0,stack:'a'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e0f2a',titleColor:'#fff',bodyColor:'#aaa',borderColor:'#2a1040',borderWidth:1}},
+      scales:{x:{grid:{display:false},stacked:true,ticks:{color:'#888',font:{size:11}},border:{display:false}},y:{grid:{color:'#1e1030',lineWidth:.5},stacked:true,ticks:{color:'#666',font:{size:10},stepSize:5},border:{display:false},max:30}}}
+  });
+}
+function tDetail(id){
+  const det=document.getElementById('domainDetail'),card=document.getElementById('card-'+id);
+  if(aDetail===id){det.classList.remove('visible');card.classList.remove('active');aDetail=null;return;}
+  document.querySelectorAll('.domain-card').forEach(c=>c.classList.remove('active'));
+  card.classList.add('active');aDetail=id;
+  const d=SD.find(x=>x.id===id);
+  const nodes=d.nl.map(([nid,lbl])=>`<div class="node-item"><span class="node-id">${nid}</span><span class="node-label">${lbl}</span></div>`).join('');
+  const pct=Math.round((d.critical+d.high)/d.nodes*100);
+  det.innerHTML=`<div class="detail-title">${d.label} — ${d.nodes} nodes</div>
+    <p style="font-size:13px;color:#aaa;margin-bottom:12px;line-height:1.6">${d.summary}</p>
+    <p style="font-size:11px;color:#555;margin-bottom:8px;font-style:italic">${d.behaviour}</p>
+    <p style="font-size:12px;color:${d.color};margin-bottom:20px">${d.headline}</p>
+    <p style="font-size:11px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em">${pct}% rated Critical or High</p>
+    <div class="node-grid">${nodes}</div>`;
+  det.classList.add('visible');
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+buildGrowth();
+buildClientBars();
+</script>
+</body>
+</html>
