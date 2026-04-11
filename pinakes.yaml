@@ -1,0 +1,771 @@
+schema: IDX Content Vocabulary
+version: '1.1'
+date: April 2026
+schema_owner: Simon Heath
+total_nodes: 105
+source_key:
+  External: Grounded in a regulatory framework or recognised external standard
+  Portfolio: "No external standard covers this concept; IDX is the originating authority, grounded in portfolio traffic evidence"
+  Market: Market convention or best practice without formal regulatory backing
+domains:
+  E:
+    name: ESG
+    subdomains:
+      E1:
+        name: Climate And Energy
+        nodes:
+        - id: E1.1
+          name: Climate strategy and targets
+          definition: "Overarching climate commitments and the strategic logic connecting them to the business model."
+          aeo_priority: Critical
+          freshness: 12 mo
+          source: External
+        - id: E1.2
+          name: Greenhouse gas emissions
+          definition: "Quantified Scope 1, 2, and 3 emissions data with methodology, boundaries, and year-on-year trend."
+          aeo_priority: Critical
+          freshness: 12 mo
+          source: External
+        - id: E1.3
+          name: Climate transition and resilience
+          definition: "Scenario analysis of physical and transition climate risks and the organisation's adaptation plans."
+          aeo_priority: High
+          freshness: 24 mo
+          source: External
+        - id: E1.4
+          name: Energy use and efficiency
+          definition: "Total energy consumption, intensity, and operational measures to reduce energy use."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: E1.5
+          name: Renewable energy
+          definition: "Renewable energy sourcing, generation, procurement mechanisms, and progress against targets."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: E1.6
+          name: Carbon markets and offsets
+          definition: "Use of voluntary and compliance carbon markets, offset purchases, and removal credits."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+      E2:
+        name: Environment And Nature
+        nodes:
+        - id: E2.1
+          name: Nature and biodiversity
+          definition: "Impacts, dependencies, and commitments relating to natural ecosystems, species, habitats, and nature-positive\
+            \ ambitions."
+          aeo_priority: Critical
+          freshness: 12 mo
+          source: Portfolio
+        - id: E2.2
+          name: Water stewardship
+          definition: "Management of water as a shared resource — consumption, withdrawal, discharge, and watershed engagement."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: E2.3
+          name: Waste and circular economy
+          definition: "Minimising waste generation, maximising resource recovery, and designing for circularity."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: E2.4
+          name: Plastics and packaging
+          definition: "Commitments, targets, and progress on reducing plastic use and redesigning packaging for recyclability\
+            \ or reuse."
+          aeo_priority: Critical
+          freshness: 12 mo
+          source: Portfolio
+        - id: E2.5
+          name: Pollution and hazardous materials
+          definition: "Management of pollutants, hazardous substances, and emissions to air, soil, and water beyond GHG."
+          aeo_priority: Standard
+          freshness: 24 mo
+          source: External
+      E3:
+        name: Social And People
+        nodes:
+        - id: E3.1
+          name: Workforce health, safety and wellbeing
+          definition: "Safety management systems, incident data, and wellbeing programmes for the workforce."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: E3.2
+          name: Diversity, equity and inclusion
+          definition: "Workforce diversity data, DEI targets, and the equity of opportunity and inclusion within the organisation's\
+            \ culture."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: E3.3
+          name: Human rights and labour standards
+          definition: "Due diligence processes for respecting human rights and upholding labour standards across operations\
+            \ and value chain."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: E3.4
+          name: Community and social impact
+          definition: "Relationship with and contribution to the communities in which the organisation operates."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: E3.5
+          name: Livelihoods
+          definition: "Contribution to the economic security of individuals and households in the value chain, particularly\
+            \ smallholders."
+          aeo_priority: High
+          freshness: 24 mo
+          source: Portfolio
+        - id: E3.6
+          name: Consumer and stakeholder engagement
+          definition: "Active engagement with consumers and external stakeholders on ESG matters, including green claims governance."
+          aeo_priority: High
+          freshness: 12 mo
+          source: Portfolio
+        - id: E3.7
+          name: Responsible products and services
+          definition: "Ensuring products and services are safe, ethically produced, and designed to deliver positive outcomes."
+          aeo_priority: Standard
+          freshness: 24 mo
+          source: External
+      E4:
+        name: Governance And Integrity
+        nodes:
+        - id: E4.1
+          name: ESG governance and oversight
+          definition: "Board and executive structures and accountabilities for overseeing ESG strategy, risk, and performance."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: E4.2
+          name: Business ethics and anti-corruption
+          definition: "Policies and systems for preventing bribery, corruption, fraud, and anti-competitive behaviour."
+          aeo_priority: Standard
+          freshness: 24 mo
+          source: External
+        - id: E4.3
+          name: Tax transparency
+          definition: "Tax strategy, governance, and public reporting including country-by-country payments."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: E4.4
+          name: Supply chain and suppliers
+          definition: "Management of supplier relationships with respect to ESG standards, due diligence, and supply chain\
+            \ transparency."
+          aeo_priority: Critical
+          freshness: 12 mo
+          source: Portfolio
+        - id: E4.5
+          name: Policy and regulatory engagement
+          definition: "Engagement with governments and regulators on ESG-relevant policy, including lobbying transparency."
+          aeo_priority: Standard
+          freshness: 24 mo
+          source: External
+      E5:
+        name: Reporting And Performance
+        nodes:
+        - id: E5.1
+          name: ESG reporting and disclosure
+          definition: "Approach to producing, publishing, and assuring ESG information including materiality assessment."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: E5.2
+          name: Framework alignment
+          definition: "Explicit mapping of ESG disclosures to recognised external standards — the cross-reference layer."
+          aeo_priority: Critical
+          freshness: 12 mo
+          source: External
+        - id: E5.3
+          name: ESG targets and progress
+          definition: "Quantified ESG targets with timescales and current progress — ambition versus delivery in one view."
+          aeo_priority: Critical
+          freshness: 6 mo
+          source: External
+        - id: E5.4
+          name: ESG ratings and indices
+          definition: "Participation in and performance against major ESG rating systems and sustainability indices."
+          aeo_priority: High
+          freshness: 12 mo
+          source: Market
+  I:
+    name: Investor Relations
+    subdomains:
+      I1:
+        name: Financial Results And Reporting
+        nodes:
+        - id: I1.1
+          name: Results and financial performance
+          definition: "Periodic reporting of financial results — revenue, profit, margins, cash flow, and KPIs with narrative\
+            \ context."
+          aeo_priority: Critical
+          freshness: 6 mo
+          source: External
+        - id: I1.2
+          name: Annual report and accounts
+          definition: "The primary statutory financial report covering full-year statements, strategic report, and governance\
+            \ disclosures."
+          aeo_priority: Critical
+          freshness: 12 mo
+          source: External
+        - id: I1.3
+          name: Results presentations and webcasts
+          definition: "Presentation decks, webcast recordings, and transcripts providing narrative context on top of statutory\
+            \ results."
+          aeo_priority: High
+          freshness: 6 mo
+          source: External
+        - id: I1.4
+          name: Regulatory announcements and filings
+          definition: "Formal regulatory disclosures including RNS announcements, inside information notifications, and exchange\
+            \ filings."
+          aeo_priority: High
+          freshness: Continuous
+          source: External
+        - id: I1.5
+          name: Financial outlook and guidance
+          definition: "Forward-looking statements on expected financial performance including formal guidance ranges and assumptions."
+          aeo_priority: High
+          freshness: 6 mo
+          source: External
+      I2:
+        name: Capital And Returns
+        nodes:
+        - id: I2.1
+          name: Capital allocation
+          definition: "Framework for deploying capital across investment, shareholder returns, debt, and M&A."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: I2.2
+          name: Dividends and buybacks
+          definition: "Policy and activity relating to cash returns to shareholders — dividends, special dividends, and buyback\
+            \ programmes."
+          aeo_priority: High
+          freshness: 6 mo
+          source: External
+        - id: I2.3
+          name: Debt and fixed income
+          definition: "Information for debt investors — bond issuance, credit ratings, debt maturity profiles, and green bond\
+            \ frameworks."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: I2.4
+          name: M&A and corporate transactions
+          definition: "Mergers, acquisitions, disposals, and demergers — deal rationale, terms, and post-completion updates."
+          aeo_priority: High
+          freshness: Continuous
+          source: External
+      I3:
+        name: Strategy And Equity Story
+        nodes:
+        - id: I3.1
+          name: Corporate strategy
+          definition: "Medium and long-term strategic direction — growth priorities, strategic pillars, and transformation\
+            \ programmes."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: I3.2
+          name: Business model and value creation
+          definition: "How the organisation creates, delivers, and captures value — inputs, activities, outputs, outcomes."
+          aeo_priority: High
+          freshness: 24 mo
+          source: External
+        - id: I3.3
+          name: Markets and competitive position
+          definition: "The markets the organisation operates in, its competitive positioning, and the structural trends shaping\
+            \ its opportunity."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: I3.4
+          name: Investment case
+          definition: "The explicit articulation of why the organisation represents a compelling investment opportunity."
+          aeo_priority: High
+          freshness: 12 mo
+          source: Market
+      I4:
+        name: Governance And Risk
+        nodes:
+        - id: I4.1
+          name: Board composition and effectiveness
+          definition: "Composition, skills, independence, and effectiveness of the board — biographies, tenure, and committee\
+            \ membership."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: I4.2
+          name: Executive remuneration
+          definition: "How executive directors are paid — policy, pay outcomes, LTIP awards, and pay-performance alignment."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: I4.3
+          name: Shareholder rights and AGM
+          definition: "AGM documentation, proxy voting, resolutions, and the mechanisms through which shareholders exercise\
+            \ ownership rights."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: I4.4
+          name: Risk management and principal risks
+          definition: "Framework for identifying and managing risk — principal risks, risk appetite, viability, and internal\
+            \ controls."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: I4.5
+          name: Regulatory and legal matters
+          definition: "Significant regulatory investigations, litigation, and compliance matters representing material risks."
+          aeo_priority: Standard
+          freshness: Continuous
+          source: External
+        - id: I4.6
+          name: Corporate governance framework
+          definition: "The full governance framework as a navigable entry point — committee terms of reference, policies,\
+            \ and comply-or-explain statements."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+      I5:
+        name: Investor Engagement
+        nodes:
+        - id: I5.1
+          name: Investor events and presentations
+          definition: "Capital markets days, results webcasts, conference appearances, and the full archive of investor event\
+            \ content."
+          aeo_priority: High
+          freshness: 24 mo
+          source: Market
+        - id: I5.2
+          name: Shareholder centre
+          definition: "Consolidated hub for retail and institutional shareholder services — share price, register, dividend\
+            \ history."
+          aeo_priority: Standard
+          freshness: Continuous
+          source: External
+        - id: I5.3
+          name: Analyst consensus and estimates
+          definition: Published external analyst consensus estimates for key financial metrics.
+          aeo_priority: Standard
+          freshness: 6 mo
+          source: Market
+        - id: I5.4
+          name: ESG for investors
+          definition: "IR-domain expression of ESG — how ESG data and credentials are packaged for the investment community."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: I5.5
+          name: Investor contacts and financial calendar
+          definition: IR team contact details, forward financial calendar, and email alert services.
+          aeo_priority: Standard
+          freshness: Continuous
+          source: Market
+        - id: I5.6
+          name: Debt investor centre
+          definition: "Dedicated section for fixed income investors — bond documentation, credit ratings, and fixed income\
+            \ contacts."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+  C:
+    name: Corporate Communications
+    subdomains:
+      C1:
+        name: Press Office Output
+        nodes:
+        - id: C1.1
+          name: Press releases and announcements
+          definition: "Official statements issued to media and the public — the primary output of the press office function."
+          aeo_priority: Critical
+          freshness: Continuous
+          source: External
+        - id: C1.2
+          name: News articles and editorial
+          definition: Authored content produced by the organisation in a news or editorial format.
+          aeo_priority: High
+          freshness: 6 mo
+          source: External
+        - id: C1.3
+          name: Media contacts and enquiries
+          definition: "The operational interface between the organisation and the media — press contact details and enquiry\
+            \ routing."
+          aeo_priority: Standard
+          freshness: 6 mo
+          source: External
+        - id: C1.4
+          name: Multimedia library
+          definition: Repository of approved visual and audio assets for press and media use.
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+      C2:
+        name: Corporate Narrative
+        nodes:
+        - id: C2.1
+          name: Purpose and values
+          definition: "The organisation's statement of why it exists beyond commercial purpose and the values that govern\
+            \ it."
+          aeo_priority: High
+          freshness: 24 mo
+          source: External
+        - id: C2.2
+          name: Company history and heritage
+          definition: "Founding story, key milestones, and historical development providing narrative context for current\
+            \ identity."
+          aeo_priority: Standard
+          freshness: 36 mo
+          source: External
+        - id: C2.3
+          name: Leadership and executive team
+          definition: "Profiles of senior leadership — biographies, roles, and accountability for named executives."
+          aeo_priority: Critical
+          freshness: 6 mo
+          source: External
+        - id: C2.4
+          name: Corporate story and about us
+          definition: "Consolidated self-description — what the company does, where it operates, and what makes it distinctive."
+          aeo_priority: Critical
+          freshness: 12 mo
+          source: External
+      C3:
+        name: Reputation And Issues
+        nodes:
+        - id: C3.1
+          name: Crisis and issues communication
+          definition: "Management of public communication during periods of reputational stress — crisis statements and issue\
+            \ responses."
+          aeo_priority: High
+          freshness: Continuous
+          source: External
+        - id: C3.2
+          name: Corporate positions and statements
+          definition: "Formally stated positions on matters of public interest — social issues, political developments, industry\
+            \ debates."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: C3.3
+          name: Regulatory and policy communication
+          definition: "External communication on regulatory matters and public policy engagement — the communication output\
+            \ of policy work."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: C3.4
+          name: Stakeholder correspondence and transparency
+          definition: "Published responses to stakeholder enquiries, FOI disclosures, and other transparency mechanisms."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+      C4:
+        name: Campaigns And Thought Leadership
+        nodes:
+        - id: C4.1
+          name: Corporate campaigns and initiatives
+          definition: "Discrete, named corporate communications campaigns designed to shift awareness, perception, or behaviour."
+          aeo_priority: High
+          freshness: 6 mo
+          source: External
+        - id: C4.2
+          name: Thought leadership and opinion
+          definition: "Content in which the organisation or its executives advance a perspective on topics relevant to the\
+            \ business."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: C4.3
+          name: Awards and recognition
+          definition: "External awards, rankings, accreditations, and recognitions received — third-party validation signals."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: C4.4
+          name: Corporate partnerships and sponsorship
+          definition: "Formal partnership and sponsorship relationships — commercial, charitable, academic, and industry."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+      C5:
+        name: Digital Presence
+        nodes:
+        - id: C5.1
+          name: Social media presence
+          definition: "Owned social media channels and the content published through them — including official profile listings."
+          aeo_priority: High
+          freshness: Continuous
+          source: External
+        - id: C5.2
+          name: Corporate website and digital estate
+          definition: "Owned digital properties — primary corporate website, microsites, regional sites, and their governance."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: C5.3
+          name: Content strategy and editorial calendar
+          definition: "Forward publishing plan and editorial governance — content themes, cadence, and standards."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+      C6:
+        name: Stakeholder Operations
+        nodes:
+        - id: C6.1
+          name: Supplier engagement and procurement
+          definition: "Operational communication with the supplier base — how to become a supplier, procurement processes,\
+            \ and supplier portal access."
+          aeo_priority: Critical
+          freshness: 12 mo
+          source: External
+  T:
+    name: Careers and Talent
+    subdomains:
+      T1:
+        name: Job Search And Application
+        nodes:
+        - id: T1.1
+          name: Job listings and search
+          definition: "Published vacancy listings — the primary interface through which candidates discover open roles."
+          aeo_priority: Critical
+          freshness: Continuous
+          source: External
+        - id: T1.2
+          name: Application process and guidance
+          definition: "Explanation of how to apply — recruitment process stages, what to expect, and support available."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: T1.3
+          name: Graduate and early careers
+          definition: "Programmes and pathways for graduates, school leavers, apprentices, and early career candidates."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: T1.4
+          name: Experienced hire and specialist recruitment
+          definition: Recruitment content targeting mid-career, senior, and specialist candidates.
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+      T2:
+        name: Employee Value Proposition
+        nodes:
+        - id: T2.1
+          name: Why work here
+          definition: "The consolidated headline EVP — what makes this a distinctive and compelling place to work."
+          aeo_priority: Critical
+          freshness: 24 mo
+          source: External
+        - id: T2.2
+          name: Rewards and benefits
+          definition: "Published information on compensation, benefits, and financial rewards available to employees."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: T2.3
+          name: Flexible and hybrid working
+          definition: "Policies and narrative around flexible working — hybrid, remote, part-time, and other non-standard\
+            \ patterns."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: T2.4
+          name: Learning and development
+          definition: Investment in employee learning, skills development, and career growth.
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+      T3:
+        name: Culture And Inclusion
+        nodes:
+        - id: T3.1
+          name: Culture and ways of working
+          definition: "Articulation of workplace culture — behaviours, norms, and ways of working that define the employee\
+            \ experience."
+          aeo_priority: High
+          freshness: 24 mo
+          source: External
+        - id: T3.2
+          name: Diversity, equity and inclusion in talent
+          definition: "DEI commitments and programmes as they relate specifically to the talent and employment experience."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: T3.3
+          name: Wellbeing and mental health
+          definition: "Support for employee wellbeing — mental health resources, physical wellbeing, and financial wellbeing."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: T3.4
+          name: Employee communities and networks
+          definition: "Employee-led or employer-supported networks and communities forming part of the inclusive culture proposition."
+          aeo_priority: Standard
+          freshness: 24 mo
+          source: External
+      T4:
+        name: Purpose And Impact In Work
+        nodes:
+        - id: T4.1
+          name: Mission and purpose at work
+          definition: "The connection between corporate purpose and the individual employee experience — working here as meaningful."
+          aeo_priority: High
+          freshness: 24 mo
+          source: External
+        - id: T4.2
+          name: Social and environmental impact through work
+          definition: "How the organisation enables employees to contribute to social and environmental impact through their\
+            \ roles."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: T4.3
+          name: Innovation and technology careers
+          definition: Careers content targeting technology, data, digital, and innovation candidates.
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+      T5:
+        name: Employer Presence And Reputation
+        nodes:
+        - id: T5.1
+          name: Life at the organisation
+          definition: "Immersive content giving prospective candidates a direct window into the day-to-day working experience."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: T5.2
+          name: Locations and global opportunities
+          definition: "Global footprint as a talent proposition — where roles are based and the opportunity to work internationally."
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: T5.3
+          name: Awards and employer recognition
+          definition: "External recognition as an employer — best employer awards, certifications, and ranking appearances."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+  B:
+    name: Brand and Product
+    subdomains:
+      B1:
+        name: Brand Portfolio
+        nodes:
+        - id: B1.1
+          name: Brand portfolio overview
+          definition: "Consolidated presentation of the full brand estate — all brands owned, managed, or licensed."
+          aeo_priority: Critical
+          freshness: 12 mo
+          source: External
+        - id: B1.2
+          name: Individual brand pages
+          definition: "Dedicated pages for individual brands — identity, product range, positioning, and consumer entry points."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+        - id: B1.3
+          name: Brand heritage and history
+          definition: "Historical narrative of individual brands — founding stories, evolution, and cultural significance."
+          aeo_priority: Standard
+          freshness: 36 mo
+          source: External
+      B2:
+        name: Products And Services
+        nodes:
+        - id: B2.1
+          name: Product and service catalogue
+          definition: "Navigable catalogue of all products and services — the primary interface for product discovery."
+          aeo_priority: Critical
+          freshness: 6 mo
+          source: External
+        - id: B2.2
+          name: Product innovation and pipeline
+          definition: "New product development, innovation pipeline, and R&D activity communicated as a brand story."
+          aeo_priority: High
+          freshness: 6 mo
+          source: External
+        - id: B2.3
+          name: Product sustainability and responsibility
+          definition: Sustainability credentials and responsible sourcing claims at the product level.
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+      B3:
+        name: Market And Customer
+        nodes:
+        - id: B3.1
+          name: Markets and geographies
+          definition: The markets, geographies, and customer segments the organisation serves.
+          aeo_priority: Standard
+          freshness: 12 mo
+          source: External
+        - id: B3.2
+          name: Customer and partner channels
+          definition: Routes through which customers and partners access products and services.
+          aeo_priority: High
+          freshness: 6 mo
+          source: External
+        - id: B3.3
+          name: Brand positioning and competitive differentiation
+          definition: "What makes the organisation's brands and products distinctively valuable — the competitive USP."
+          aeo_priority: High
+          freshness: 24 mo
+          source: External
+      B4:
+        name: Brand Governance
+        nodes:
+        - id: B4.1
+          name: Brand guidelines and identity
+          definition: "Published guidance on how brands should be represented — visual identity standards for external audiences."
+          aeo_priority: Standard
+          freshness: 24 mo
+          source: External
+        - id: B4.2
+          name: Intellectual property and licensing
+          definition: "Communication of the IP position — trademarks, patents, and licensing terms for brand assets and technologies."
+          aeo_priority: Standard
+          freshness: 24 mo
+          source: External
+        - id: B4.3
+          name: Product certifications and standards compliance
+          definition: "External certifications, quality standards, and regulatory compliance credentials held by products."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+      B5:
+        name: Sector-Specific Brand Expression
+        nodes:
+        - id: B5.1
+          name: Consumer brand content
+          definition: "Brand and product content formats specific to consumer-facing organisations — recipes, inspiration,\
+            \ community."
+          aeo_priority: High
+          freshness: 6 mo
+          source: External
+        - id: B5.2
+          name: B2B and industrial product content
+          definition: "Brand and product content formats specific to B2B and industrial organisations — technical specs, case\
+            \ studies."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
+      B6:
+        name: Operational Presence
+        nodes:
+        - id: B6.1
+          name: Operations and business units
+          definition: "The organisation's operational footprint — where it operates, what it does at each location or business\
+            \ unit, and the scale of its activities."
+          aeo_priority: High
+          freshness: 12 mo
+          source: External
